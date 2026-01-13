@@ -7,3 +7,6 @@ static-build
 .DS_Store
 .env
 .env.*
+*.md
+.dockerignore
+.gitignore

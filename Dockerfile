@@ -12,8 +12,11 @@ RUN npm ci --legacy-peer-deps
 # Copy source code
 COPY . .
 
-# Build the web version
-RUN npx expo export --platform web --output-dir dist
+# Build the web version (generates dist/index.html)
+RUN npx expo export:web --output-dir dist
+
+# Validate build output
+RUN test -f dist/index.html || (echo "ERROR: index.html not found" && exit 1)
 
 # Stage 2: Serve with nginx
 FROM nginx:alpine
