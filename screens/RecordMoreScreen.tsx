@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Alert } from "react-native";
 import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
-import * as Haptics from "expo-haptics";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { RecordButton } from "@/components/RecordButton";
@@ -10,6 +9,7 @@ import { Spacing } from "@/constants/theme";
 import { startRecording, stopRecording, requestAudioPermissions } from "@/utils/audioRecording";
 import { transcribeAudio, extractMealAndDrinkOrders } from "@/utils/transcription";
 import { getApiKey } from "@/utils/apiKeyStorage";
+import { impactAsync, ImpactFeedbackStyle } from "@/utils/haptics";
 
 export default function RecordMoreScreen() {
   const { paddingTop, paddingBottom } = useScreenInsets();
@@ -52,7 +52,7 @@ export default function RecordMoreScreen() {
   };
 
   const handleRecordPress = async () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    impactAsync(ImpactFeedbackStyle.Medium);
 
     if (!hasApiKey && !isRecording) {
       Alert.alert(

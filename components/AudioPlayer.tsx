@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { View, Pressable, StyleSheet } from "react-native";
+import React, { useState, useRef, useEffect } from "react";
+import { View, Pressable, StyleSheet, Platform } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { Audio } from "expo-av";
 import { ThemedText } from "@/components/ThemedText";
 import { Card } from "@/components/Card";
 import { useTheme } from "@/hooks/useTheme";
@@ -14,9 +15,57 @@ interface AudioPlayerProps {
 export function AudioPlayer({ audioUri, duration = "0:00" }: AudioPlayerProps) {
   const { theme } = useTheme();
   const [isPlaying, setIsPlaying] = useState(false);
+  const soundRef = useRef<Audio.Sound | null>(null);
+  const webAudioRef = useRef<HTMLAudioElement | null>(null);
 
-  const togglePlayback = () => {
-    setIsPlaying(!isPlaying);
+  useEffect(() => {
+    return () => {
+      if (soundRef.current) {
+        soundRef.current.unloadAsync();
+      }
+      if (webAudioRef.current) {
+        webAudioRef.current.pause();
+      }
+    };
+  }, []);
+
+  const togglePlayback = async () => {
+    try {
+      if (Platform.OS === 'web') {
+        if (!webAudioRef.current) {
+          webAudioRef.current = new window.Audio(audioUri);
+          webAudioRef.current.onended = () => setIsPlaying(false);
+        }
+        
+        if (isPlaying) {
+          webAudioRef.current.pause();
+          setIsPlaying(false);
+        } else {
+          await webAudioRef.current.play();
+          setIsPlaying(true);
+        }
+      } else {
+        if (isPlaying && soundRef.current) {
+          await soundRef.current.pauseAsync();
+          setIsPlaying(false);
+        } else {
+          if (!soundRef.current) {
+            const { sound } = await Audio.Sound.createAsync({ uri: audioUri });
+            soundRef.current = sound;
+            sound.setOnPlaybackStatusUpdate((status) => {
+              if (status.isLoaded && status.didJustFinish) {
+                setIsPlaying(false);
+              }
+            });
+          }
+          await soundRef.current.playAsync();
+          setIsPlaying(true);
+        }
+      }
+    } catch (error) {
+      console.error('Playback error:', error);
+      setIsPlaying(false);
+    }
   };
 
   return (
