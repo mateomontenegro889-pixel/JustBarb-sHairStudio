@@ -1,4 +1,5 @@
 import * as FileSystem from 'expo-file-system';
+import { Platform } from 'react-native';
 
 export async function transcribeAudio(audioUri: string, apiKey: string): Promise<string> {
   try {
@@ -8,15 +9,21 @@ export async function transcribeAudio(audioUri: string, apiKey: string): Promise
 
     const formData = new FormData();
     
-    formData.append('file', {
-      uri: audioUri,
-      type: 'audio/m4a',
-      name: 'recording.m4a',
-    } as any);
+    if (Platform.OS === 'web') {
+      const response = await fetch(audioUri);
+      const blob = await response.blob();
+      formData.append('file', blob, 'recording.webm');
+    } else {
+      formData.append('file', {
+        uri: audioUri,
+        type: 'audio/m4a',
+        name: 'recording.m4a',
+      } as any);
+    }
     
     formData.append('model', 'whisper-1');
 
-    const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+    const apiResponse = await fetch('https://api.openai.com/v1/audio/transcriptions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
@@ -24,15 +31,15 @@ export async function transcribeAudio(audioUri: string, apiKey: string): Promise
       body: formData,
     });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
+    if (!apiResponse.ok) {
+      const errorData = await apiResponse.json().catch(() => ({}));
       throw new Error(
         errorData.error?.message || 
-        `Transcription failed with status ${response.status}`
+        `Transcription failed with status ${apiResponse.status}`
       );
     }
 
-    const data = await response.json();
+    const data = await apiResponse.json();
     return data.text;
   } catch (error) {
     console.error('Transcription error:', error);
