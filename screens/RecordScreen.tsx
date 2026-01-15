@@ -49,9 +49,12 @@ export default function RecordScreen() {
   };
 
   const handleRecordPress = async () => {
+    console.log('[RecordScreen] handleRecordPress called, isRecording:', isRecording, 'hasApiKey:', hasApiKey);
+    
     impactAsync(ImpactFeedbackStyle.Medium);
 
     if (!hasApiKey && !isRecording) {
+      console.log('[RecordScreen] No API key, showing alert');
       Alert.alert(
         "API Key Required",
         "Please add your OpenAI API key in the Profile tab to use transcription.",
@@ -61,11 +64,13 @@ export default function RecordScreen() {
     }
 
     if (isRecording) {
+      console.log('[RecordScreen] Stopping recording...');
       setIsRecording(false);
       setIsProcessing(true);
 
       try {
         const audioUri = await stopRecording();
+        console.log('[RecordScreen] Recording stopped, audioUri:', audioUri);
         
         if (!audioUri) {
           throw new Error("Failed to save recording");
@@ -76,8 +81,11 @@ export default function RecordScreen() {
           throw new Error("API key not found");
         }
 
+        console.log('[RecordScreen] Starting transcription...');
         const transcribedText = await transcribeAudio(audioUri, apiKey);
+        console.log('[RecordScreen] Transcription complete:', transcribedText);
         const cleanedText = await extractMealAndDrinkOrders(transcribedText, apiKey);
+        console.log('[RecordScreen] Cleaned text:', cleanedText);
 
         setIsProcessing(false);
         setRecordingTime(0);
@@ -87,6 +95,7 @@ export default function RecordScreen() {
           transcribedText: cleanedText,
         });
       } catch (error: any) {
+        console.error('[RecordScreen] Error:', error);
         setIsProcessing(false);
         setRecordingTime(0);
         
@@ -94,8 +103,10 @@ export default function RecordScreen() {
         Alert.alert("Transcription Error", errorMessage);
       }
     } else {
+      console.log('[RecordScreen] Starting recording...');
       try {
         const hasPermission = await requestAudioPermissions();
+        console.log('[RecordScreen] Permission result:', hasPermission);
         if (!hasPermission) {
           Alert.alert(
             "Permission Required",
@@ -106,9 +117,11 @@ export default function RecordScreen() {
         }
 
         await startRecording();
+        console.log('[RecordScreen] Recording started');
         setIsRecording(true);
         setRecordingTime(0);
       } catch (error: any) {
+        console.error('[RecordScreen] Start recording error:', error);
         Alert.alert("Recording Error", error.message || "Failed to start recording");
       }
     }

@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Pressable, StyleSheet } from "react-native";
+import React, { useEffect, useCallback } from "react";
+import { Pressable, StyleSheet, Platform } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import Animated, {
   useSharedValue,
@@ -40,14 +40,22 @@ export function RecordButton({ isRecording, onPress }: RecordButtonProps) {
     transform: [{ scale: scale.value }],
   }));
 
+  const handlePress = useCallback(() => {
+    onPress();
+  }, [onPress]);
+
   return (
     <Pressable
-      onPress={onPress}
+      onPress={handlePress}
+      accessible={true}
+      accessibilityRole="button"
+      accessibilityLabel={isRecording ? "Stop recording" : "Start recording"}
       style={({ pressed }) => [
         styles.button,
         {
           backgroundColor: isRecording ? theme.recording : theme.primary,
           opacity: pressed ? 0.8 : 1,
+          cursor: Platform.OS === 'web' ? 'pointer' : undefined,
         },
       ]}
     >
