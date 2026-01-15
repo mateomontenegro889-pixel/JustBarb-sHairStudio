@@ -94,7 +94,7 @@ export default function ConfirmOrderScreen() {
 
     try {
       await orderStore.add(newOrder);
-      navigation.navigate("RecordTab");
+      navigation.goBack();
     } catch (error) {
       Alert.alert("Error", "Failed to save order. Please try again.");
     }
