@@ -89,5 +89,12 @@ export async function extractMealAndDrinkOrders(transcribedText: string, apiKey:
 }
 
 export function validateApiKey(apiKey: string): boolean {
-  return apiKey.trim().length > 0 && apiKey.startsWith('sk-');
+  const trimmed = apiKey.trim();
+  const isValid = trimmed.length > 20 && (
+    trimmed.startsWith('sk-') || 
+    trimmed.startsWith('sk-proj-') ||
+    trimmed.startsWith('sk-org-')
+  );
+  console.log('[validateApiKey] Input length:', trimmed.length, 'isValid:', isValid);
+  return isValid;
 }

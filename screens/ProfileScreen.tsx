@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Pressable, Alert, TextInput, Modal } from "react-native";
+import { View, StyleSheet, Pressable, Alert, TextInput, Modal, Platform } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
@@ -80,7 +80,10 @@ export default function ProfileScreen() {
   };
 
   const handleSaveApiKey = async () => {
+    console.log('[ProfileScreen] handleSaveApiKey called, input length:', apiKeyInput.length);
+    
     if (!validateApiKey(apiKeyInput)) {
+      console.log('[ProfileScreen] API key validation failed');
       Alert.alert(
         "Invalid API Key",
         "Please enter a valid OpenAI API key (starts with 'sk-')."
@@ -89,12 +92,15 @@ export default function ProfileScreen() {
     }
 
     try {
+      console.log('[ProfileScreen] Saving API key...');
       await saveApiKey(apiKeyInput);
+      console.log('[ProfileScreen] API key saved successfully');
       setHasApiKey(true);
       setShowApiKeyModal(false);
       setApiKeyInput("");
       Alert.alert("Success", "API key saved successfully!");
     } catch (error) {
+      console.error('[ProfileScreen] Save API key error:', error);
       Alert.alert("Error", "Failed to save API key. Please try again.");
     }
   };
@@ -280,7 +286,14 @@ export default function ProfileScreen() {
 
             <View style={styles.modalActions}>
               <Pressable
-                style={[styles.modalButton, styles.cancelButton]}
+                style={({ pressed }) => [
+                  styles.modalButton,
+                  styles.cancelButton,
+                  { 
+                    opacity: pressed ? 0.6 : 1,
+                    cursor: Platform.OS === 'web' ? 'pointer' : undefined,
+                  },
+                ]}
                 onPress={() => {
                   setShowApiKeyModal(false);
                   setApiKeyInput("");
@@ -289,10 +302,14 @@ export default function ProfileScreen() {
                 <ThemedText>Cancel</ThemedText>
               </Pressable>
               <Pressable
-                style={[
+                style={({ pressed }) => [
                   styles.modalButton,
                   styles.saveButton,
-                  { backgroundColor: theme.primary },
+                  { 
+                    backgroundColor: theme.primary,
+                    opacity: pressed ? 0.8 : 1,
+                    cursor: Platform.OS === 'web' ? 'pointer' : undefined,
+                  },
                 ]}
                 onPress={handleSaveApiKey}
               >
