@@ -41,8 +41,15 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Copy built app from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
 
+# Verify files are present
+RUN echo "=== Nginx html contents ===" && ls -la /usr/share/nginx/html/ && \
+    test -f /usr/share/nginx/html/index.html || (echo "ERROR: index.html missing!" && exit 1)
+
+# Test nginx config
+RUN nginx -t
+
 # Google Cloud Run uses port 8080
 EXPOSE 8080
 
-# Start nginx
+# Start nginx in foreground
 CMD ["nginx", "-g", "daemon off;"]
