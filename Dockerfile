@@ -1,7 +1,15 @@
 # Stage 1: Build the Expo web app
 FROM node:20-alpine AS builder
 
+# Increase memory for build and set CI mode
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+ENV CI=true
+ENV EXPO_NO_DOCTOR=true
+
 WORKDIR /app
+
+# Install git (required by some Expo dependencies)
+RUN apk add --no-cache git
 
 # Copy package files first for better caching
 COPY package.json package-lock.json ./
@@ -12,11 +20,14 @@ RUN npm ci --legacy-peer-deps
 # Copy source code
 COPY . .
 
-# Build the web version (generates dist/index.html)
-RUN npx expo export:web --output-dir dist
+# Build the web version using Expo's Metro bundler
+RUN npx expo export --platform web
+
+# Debug: Show what was created
+RUN echo "=== Build output ===" && ls -la dist/ && ls -la dist/_expo/ 2>/dev/null || true
 
 # Validate build output
-RUN test -f dist/index.html || (echo "ERROR: index.html not found" && exit 1)
+RUN test -f dist/index.html || (echo "ERROR: index.html not found in dist/" && exit 1)
 
 # Stage 2: Serve with nginx
 FROM nginx:alpine
