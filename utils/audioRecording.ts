@@ -8,7 +8,13 @@ let webAudioChunks: Blob[] = [];
 export async function requestAudioPermissions(): Promise<boolean> {
   try {
     if (Platform.OS === 'web') {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          noiseSuppression: true,
+          echoCancellation: true,
+          autoGainControl: true,
+        }
+      });
       stream.getTracks().forEach(track => track.stop());
       return true;
     }
@@ -28,7 +34,15 @@ export async function startRecording(): Promise<void> {
     }
 
     if (Platform.OS === 'web') {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          noiseSuppression: true,
+          echoCancellation: true,
+          autoGainControl: true,
+          channelCount: 1,
+          sampleRate: 16000,
+        }
+      });
       webMediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
       webAudioChunks = [];
       
