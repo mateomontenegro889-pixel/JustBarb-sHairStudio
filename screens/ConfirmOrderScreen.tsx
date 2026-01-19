@@ -59,7 +59,7 @@ export default function ConfirmOrderScreen() {
               backgroundColor: orderText.trim() ? theme.primary : theme.backgroundSecondary,
               opacity: pressed ? 0.8 : 1 
             },
-            Platform.OS === 'web' ? { cursor: orderText.trim() ? 'pointer' : 'not-allowed' } : {},
+            Platform.OS === 'web' ? { cursor: 'pointer' } : {},
           ]}
         >
           <ThemedText
@@ -144,18 +144,13 @@ export default function ConfirmOrderScreen() {
                     backgroundColor: tableNumber === num ? theme.primary : theme.backgroundDefault,
                     borderColor: tableNumber === num ? theme.primary : theme.border,
                     opacity: pressed ? 0.8 : 1,
-                    ...Platform.select({
-                      ios: tableNumber === num ? {
-                        shadowColor: theme.primary,
-                        shadowOffset: { width: 0, height: 2 },
-                        shadowOpacity: 0.3,
-                        shadowRadius: 4,
-                      } : {},
-                      web: tableNumber === num ? {
-                        boxShadow: `0 2px 8px ${theme.primary}40`,
-                      } : {},
-                    }),
                   },
+                  tableNumber === num && Platform.OS === 'ios' ? {
+                    shadowColor: theme.primary,
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 4,
+                  } : {},
                   Platform.OS === 'web' ? { cursor: 'pointer' } : {},
                 ]}
               >
