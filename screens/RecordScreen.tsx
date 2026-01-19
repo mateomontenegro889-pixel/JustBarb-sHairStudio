@@ -4,8 +4,10 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { RecordButton } from "@/components/RecordButton";
+import { Card } from "@/components/Card";
 import { useScreenInsets } from "@/hooks/useScreenInsets";
-import { Spacing } from "@/constants/theme";
+import { useTheme } from "@/hooks/useTheme";
+import { Spacing, BorderRadius } from "@/constants/theme";
 import { startRecording, stopRecording, requestAudioPermissions } from "@/utils/audioRecording";
 import { transcribeAudio, extractMealAndDrinkOrders } from "@/utils/transcription";
 import { getApiKey } from "@/utils/apiKeyStorage";
@@ -13,6 +15,7 @@ import { impactAsync, ImpactFeedbackStyle } from "@/utils/haptics";
 
 export default function RecordScreen() {
   const { paddingTop, paddingBottom } = useScreenInsets();
+  const { theme } = useTheme();
   const navigation = useNavigation<any>();
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
@@ -128,9 +131,9 @@ export default function RecordScreen() {
   };
 
   const getStatusText = (): string => {
-    if (isProcessing) return "Processing...";
-    if (isRecording) return "Recording...";
-    return "Tap to start recording";
+    if (isProcessing) return "Processing your order...";
+    if (isRecording) return "Listening...";
+    return "Tap the button to start recording";
   };
 
   return (
@@ -144,16 +147,32 @@ export default function RecordScreen() {
       ]}
     >
       <View style={styles.content}>
-        {isRecording ? (
-          <ThemedText type="title" style={styles.timer}>
-            {formatTime(recordingTime)}
+        <View style={styles.headerSection}>
+          <ThemedText type="title" style={styles.title}>
+            New Order
           </ThemedText>
+          <ThemedText type="caption" style={styles.subtitle}>
+            Speak clearly to record the order
+          </ThemedText>
+        </View>
+
+        {isRecording ? (
+          <Card style={styles.timerCard}>
+            <View style={styles.timerContent}>
+              <View style={[styles.recordingIndicator, { backgroundColor: theme.recording }]} />
+              <ThemedText type="title" style={[styles.timer, { color: theme.primary }]}>
+                {formatTime(recordingTime)}
+              </ThemedText>
+            </View>
+          </Card>
         ) : null}
 
-        <RecordButton
-          isRecording={isRecording}
-          onPress={handleRecordPress}
-        />
+        <View style={styles.buttonContainer}>
+          <RecordButton
+            isRecording={isRecording}
+            onPress={handleRecordPress}
+          />
+        </View>
 
         <View style={styles.waveformContainer}>
           {isRecording ? (
@@ -165,6 +184,7 @@ export default function RecordScreen() {
                     styles.waveBar,
                     {
                       height: Math.random() * 40 + 10,
+                      backgroundColor: theme.primary,
                     },
                   ]}
                 />
@@ -173,9 +193,22 @@ export default function RecordScreen() {
           ) : null}
         </View>
 
-        <ThemedText type="caption" style={styles.statusText}>
+        <ThemedText type="body" style={[styles.statusText, { color: theme.textSecondary }]}>
           {getStatusText()}
         </ThemedText>
+
+        {!hasApiKey ? (
+          <Card accentColor={theme.warning} style={styles.warningCard}>
+            <View style={styles.warningContent}>
+              <ThemedText style={{ color: theme.warning, fontWeight: "600" }}>
+                API Key Required
+              </ThemedText>
+              <ThemedText type="caption">
+                Go to Profile tab to add your OpenAI API key
+              </ThemedText>
+            </View>
+          </Card>
+        ) : null}
       </View>
     </ThemedView>
   );
@@ -184,16 +217,45 @@ export default function RecordScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
   content: {
+    flex: 1,
     alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: Spacing.xl,
     gap: Spacing["2xl"],
   },
-  timer: {
-    fontSize: 32,
+  headerSection: {
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  title: {
+    fontSize: 28,
     fontWeight: "700",
+  },
+  subtitle: {
+    textAlign: "center",
+  },
+  timerCard: {
+    paddingHorizontal: Spacing["2xl"],
+    paddingVertical: Spacing.lg,
+  },
+  timerContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.md,
+  },
+  recordingIndicator: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+  },
+  timer: {
+    fontSize: 36,
+    fontWeight: "700",
+  },
+  buttonContainer: {
+    marginVertical: Spacing.xl,
   },
   waveformContainer: {
     height: 60,
@@ -207,10 +269,15 @@ const styles = StyleSheet.create({
   },
   waveBar: {
     width: 4,
-    backgroundColor: "#2563EB",
     borderRadius: 2,
   },
   statusText: {
     textAlign: "center",
+  },
+  warningCard: {
+    padding: Spacing.lg,
+  },
+  warningContent: {
+    gap: Spacing.xs,
   },
 });

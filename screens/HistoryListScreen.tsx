@@ -1,10 +1,11 @@
 import React, { useState, useCallback } from "react";
-import { View, StyleSheet, TextInput, FlatList, RefreshControl } from "react-native";
+import { View, StyleSheet, TextInput, FlatList, RefreshControl, Pressable, Platform } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { OrderCard } from "@/components/OrderCard";
+import { Card } from "@/components/Card";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import { orderStore } from "@/utils/orderStore";
@@ -20,13 +21,18 @@ export default function HistoryListScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [orders, setOrders] = useState<Order[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<'all' | 'open' | 'closed'>('all');
 
   const loadOrders = useCallback(async () => {
-    const allOrders = searchQuery
+    let allOrders = searchQuery
       ? await orderStore.search(searchQuery)
       : await orderStore.getAll();
+    
+    if (activeFilter !== 'all') {
+      allOrders = allOrders.filter(order => order.status === activeFilter);
+    }
     setOrders(allOrders);
-  }, [searchQuery]);
+  }, [searchQuery, activeFilter]);
 
   useFocusEffect(
     useCallback(() => {
@@ -55,33 +61,64 @@ export default function HistoryListScreen() {
     return date.toLocaleDateString();
   };
 
+  const FilterButton = ({ filter, label }: { filter: 'all' | 'open' | 'closed', label: string }) => (
+    <Pressable
+      onPress={() => setActiveFilter(filter)}
+      style={[
+        styles.filterButton,
+        { 
+          backgroundColor: activeFilter === filter ? theme.primary : theme.backgroundDefault,
+          borderColor: activeFilter === filter ? theme.primary : theme.border,
+        },
+        Platform.OS === 'web' ? { cursor: 'pointer' } : {},
+      ]}
+    >
+      <ThemedText
+        style={{
+          color: activeFilter === filter ? theme.buttonText : theme.textSecondary,
+          fontWeight: activeFilter === filter ? "600" : "400",
+          fontSize: 14,
+        }}
+      >
+        {label}
+      </ThemedText>
+    </Pressable>
+  );
+
   return (
     <ThemedView style={styles.container}>
-      <View
-        style={[
-          styles.searchContainer,
-          {
-            backgroundColor: theme.backgroundDefault,
-            borderColor: theme.border,
-          },
-        ]}
-      >
-        <Feather name="search" size={20} color={theme.textSecondary} />
-        <TextInput
-          value={searchQuery}
-          onChangeText={text => {
-            setSearchQuery(text);
-            loadOrders();
-          }}
-          placeholder="Search orders..."
-          placeholderTextColor={theme.textSecondary}
+      <View style={styles.headerSection}>
+        <View
           style={[
-            styles.searchInput,
+            styles.searchContainer,
             {
-              color: theme.text,
+              backgroundColor: theme.backgroundDefault,
             },
           ]}
-        />
+        >
+          <Feather name="search" size={18} color={theme.textTertiary} />
+          <TextInput
+            value={searchQuery}
+            onChangeText={text => {
+              setSearchQuery(text);
+              loadOrders();
+            }}
+            placeholder="Search orders..."
+            placeholderTextColor={theme.textTertiary}
+            style={[
+              styles.searchInput,
+              {
+                color: theme.text,
+              },
+            ]}
+          />
+        </View>
+
+        <View style={styles.filterRow}>
+          <FilterButton filter="all" label="All" />
+          <FilterButton filter="open" label="Active" />
+          <FilterButton filter="closed" label="Completed" />
+        </View>
       </View>
 
       <FlatList
@@ -107,17 +144,23 @@ export default function HistoryListScreen() {
         ItemSeparatorComponent={() => <View style={{ height: Spacing.md }} />}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Feather name="clipboard" size={48} color={theme.textSecondary} />
+            <View style={[styles.emptyIcon, { backgroundColor: theme.backgroundSecondary }]}>
+              <Feather name="clipboard" size={32} color={theme.textTertiary} />
+            </View>
             <ThemedText type="title" style={styles.emptyTitle}>
               No orders yet
             </ThemedText>
-            <ThemedText type="caption" style={styles.emptyText}>
+            <ThemedText type="caption" style={[styles.emptyText, { color: theme.textSecondary }]}>
               Start recording to create your first order
             </ThemedText>
           </View>
         }
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          <RefreshControl 
+            refreshing={refreshing} 
+            onRefresh={handleRefresh}
+            tintColor={theme.primary}
+          />
         }
       />
     </ThemedView>
@@ -128,23 +171,38 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  headerSection: {
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.lg,
+    paddingBottom: Spacing.md,
+    gap: Spacing.md,
+  },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    margin: Spacing.xl,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
-    borderRadius: BorderRadius.sm,
-    borderWidth: 1,
+    borderRadius: BorderRadius.lg,
     gap: Spacing.sm,
   },
   searchInput: {
     flex: 1,
-    fontSize: 17,
+    fontSize: 16,
     padding: 0,
+  },
+  filterRow: {
+    flexDirection: "row",
+    gap: Spacing.sm,
+  },
+  filterButton: {
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.full,
+    borderWidth: 1,
   },
   listContent: {
     paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.sm,
   },
   emptyContainer: {
     alignItems: "center",
@@ -152,8 +210,16 @@ const styles = StyleSheet.create({
     paddingTop: Spacing["5xl"],
     gap: Spacing.md,
   },
+  emptyIcon: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: Spacing.md,
+  },
   emptyTitle: {
-    marginTop: Spacing.lg,
+    marginTop: Spacing.sm,
   },
   emptyText: {
     textAlign: "center",

@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from "react";
-import { Pressable, StyleSheet, Platform } from "react-native";
+import { Pressable, StyleSheet, Platform, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import Animated, {
   useSharedValue,
@@ -10,7 +10,6 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { useTheme } from "@/hooks/useTheme";
-import { Spacing } from "@/constants/theme";
 
 interface RecordButtonProps {
   isRecording: boolean;
@@ -18,8 +17,10 @@ interface RecordButtonProps {
 }
 
 export function RecordButton({ isRecording, onPress }: RecordButtonProps) {
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
   const scale = useSharedValue(1);
+  const ringScale = useSharedValue(1);
+  const ringOpacity = useSharedValue(0.3);
 
   useEffect(() => {
     if (isRecording) {
@@ -31,8 +32,26 @@ export function RecordButton({ isRecording, onPress }: RecordButtonProps) {
         -1,
         false
       );
+      ringScale.value = withRepeat(
+        withSequence(
+          withTiming(1.4, { duration: 1000 }),
+          withTiming(1, { duration: 1000 })
+        ),
+        -1,
+        false
+      );
+      ringOpacity.value = withRepeat(
+        withSequence(
+          withTiming(0, { duration: 1000 }),
+          withTiming(0.3, { duration: 1000 })
+        ),
+        -1,
+        false
+      );
     } else {
       scale.value = withSpring(1);
+      ringScale.value = withSpring(1);
+      ringOpacity.value = withTiming(0.3);
     }
   }, [isRecording]);
 
@@ -40,48 +59,86 @@ export function RecordButton({ isRecording, onPress }: RecordButtonProps) {
     transform: [{ scale: scale.value }],
   }));
 
+  const ringStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: ringScale.value }],
+    opacity: ringOpacity.value,
+  }));
+
   const handlePress = useCallback(() => {
     onPress();
   }, [onPress]);
 
   return (
-    <Pressable
-      onPress={handlePress}
-      accessible={true}
-      accessibilityRole="button"
-      accessibilityLabel={isRecording ? "Stop recording" : "Start recording"}
-      style={({ pressed }) => [
-        styles.button,
-        {
-          backgroundColor: isRecording ? theme.recording : theme.primary,
-          opacity: pressed ? 0.8 : 1,
-          cursor: Platform.OS === 'web' ? 'pointer' : undefined,
-        },
-      ]}
-    >
-      <Animated.View style={[styles.iconContainer, animatedStyle]}>
-        <Feather
-          name={isRecording ? "square" : "mic"}
-          size={48}
-          color={theme.buttonText}
+    <View style={styles.container}>
+      {isRecording ? (
+        <Animated.View
+          style={[
+            styles.ring,
+            { borderColor: theme.recording },
+            ringStyle,
+          ]}
         />
-      </Animated.View>
-    </Pressable>
+      ) : null}
+      <Pressable
+        onPress={handlePress}
+        accessible={true}
+        accessibilityRole="button"
+        accessibilityLabel={isRecording ? "Stop recording" : "Start recording"}
+        style={({ pressed }) => [
+          styles.button,
+          {
+            backgroundColor: isRecording ? theme.recording : theme.primary,
+            opacity: pressed ? 0.9 : 1,
+            cursor: Platform.OS === 'web' ? 'pointer' : undefined,
+            ...Platform.select({
+              ios: {
+                shadowColor: isRecording ? theme.recording : theme.primary,
+                shadowOffset: { width: 0, height: 8 },
+                shadowOpacity: 0.4,
+                shadowRadius: 16,
+              },
+              android: {
+                elevation: 8,
+              },
+              web: {
+                boxShadow: isRecording 
+                  ? `0 8px 24px ${theme.recording}66`
+                  : `0 8px 24px ${theme.primary}66`,
+              },
+            }),
+          },
+        ]}
+      >
+        <Animated.View style={[styles.iconContainer, animatedStyle]}>
+          <Feather
+            name={isRecording ? "square" : "mic"}
+            size={48}
+            color={theme.buttonText}
+          />
+        </Animated.View>
+      </Pressable>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  ring: {
+    position: "absolute",
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    borderWidth: 3,
+  },
   button: {
     width: 120,
     height: 120,
     borderRadius: 60,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
   },
   iconContainer: {
     justifyContent: "center",
