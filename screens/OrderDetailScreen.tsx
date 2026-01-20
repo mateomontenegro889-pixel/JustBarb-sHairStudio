@@ -1,5 +1,5 @@
 import React, { useLayoutEffect } from "react";
-import { View, StyleSheet, Pressable, Share, Alert } from "react-native";
+import { View, StyleSheet, Pressable, Share, Platform } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
@@ -9,6 +9,7 @@ import { ScreenScrollView } from "@/components/ScreenScrollView";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import { orderStore } from "@/utils/orderStore";
+import { showAlert, showError } from "@/utils/webAlert";
 
 export default function OrderDetailScreen() {
   const { theme } = useTheme();
@@ -33,13 +34,19 @@ export default function OrderDetailScreen() {
         <View style={{ flexDirection: 'row', gap: Spacing.md }}>
           <Pressable
             onPress={handleShare}
-            style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
+            style={({ pressed }) => [
+              { opacity: pressed ? 0.6 : 1 },
+              Platform.OS === 'web' ? { cursor: 'pointer' } : {},
+            ]}
           >
             <Feather name="share" size={20} color={theme.text} />
           </Pressable>
           <Pressable
             onPress={handleDelete}
-            style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
+            style={({ pressed }) => [
+              { opacity: pressed ? 0.6 : 1 },
+              Platform.OS === 'web' ? { cursor: 'pointer' } : {},
+            ]}
           >
             <Feather name="trash-2" size={20} color="#DC2626" />
           </Pressable>
@@ -51,7 +58,7 @@ export default function OrderDetailScreen() {
   const handleDelete = () => {
     if (!order) return;
     
-    Alert.alert(
+    showAlert(
       "Delete Order",
       "Are you sure you want to delete this order? This action cannot be undone.",
       [
@@ -64,7 +71,7 @@ export default function OrderDetailScreen() {
               await orderStore.delete(order.id);
               navigation.goBack();
             } catch (error) {
-              Alert.alert("Error", "Failed to delete order.");
+              showError("Error", "Failed to delete order.");
             }
           },
         },
@@ -78,7 +85,7 @@ export default function OrderDetailScreen() {
     const newStatus = order.status === 'closed' ? 'open' : 'closed';
     const actionText = newStatus === 'closed' ? 'close' : 'reopen';
     
-    Alert.alert(
+    showAlert(
       `${newStatus === 'closed' ? 'Close' : 'Reopen'} Order`,
       `Are you sure you want to ${actionText} this order?`,
       [
@@ -94,7 +101,7 @@ export default function OrderDetailScreen() {
               }
               setOrder({ ...order, status: newStatus });
             } catch (error) {
-              Alert.alert("Error", `Failed to ${actionText} order.`);
+              showError("Error", `Failed to ${actionText} order.`);
             }
           },
         },
@@ -110,11 +117,20 @@ export default function OrderDetailScreen() {
       const guestInfo = order.guestCount ? `${order.guestCount} guests` : '';
       const headerInfo = [tableInfo, guestInfo].filter(Boolean).join(' - ');
       
-      await Share.share({
-        message: `Order from ${order.staffName}${headerInfo ? `\n${headerInfo}` : ''}\n\n${order.transcribedText}\n\nRecorded: ${new Date(
-          order.timestamp
-        ).toLocaleString()}`,
-      });
+      if (Platform.OS === 'web') {
+        const shareText = `Order from ${order.staffName}${headerInfo ? `\n${headerInfo}` : ''}\n\n${order.transcribedText}\n\nRecorded: ${new Date(order.timestamp).toLocaleString()}`;
+        
+        if (navigator.share) {
+          await navigator.share({ text: shareText });
+        } else {
+          await navigator.clipboard.writeText(shareText);
+          window.alert('Order copied to clipboard!');
+        }
+      } else {
+        await Share.share({
+          message: `Order from ${order.staffName}${headerInfo ? `\n${headerInfo}` : ''}\n\n${order.transcribedText}\n\nRecorded: ${new Date(order.timestamp).toLocaleString()}`,
+        });
+      }
     } catch (error) {
       console.error("Error sharing:", error);
     }
@@ -217,6 +233,7 @@ export default function OrderDetailScreen() {
                 borderWidth: 2,
                 opacity: pressed ? 0.8 : 1,
               },
+              Platform.OS === 'web' ? { cursor: 'pointer' } : {},
             ]}
           >
             <Feather name="mic" size={20} color={theme.primary} />
@@ -234,6 +251,7 @@ export default function OrderDetailScreen() {
               opacity: pressed ? 0.8 : 1,
               flex: order.status === 'open' ? 1 : undefined,
             },
+            Platform.OS === 'web' ? { cursor: 'pointer' } : {},
           ]}
         >
           <Feather

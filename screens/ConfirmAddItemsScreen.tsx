@@ -1,5 +1,5 @@
 import React, { useState, useLayoutEffect } from "react";
-import { View, StyleSheet, TextInput, Pressable, Alert } from "react-native";
+import { View, StyleSheet, TextInput, Pressable } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { ThemedText } from "@/components/ThemedText";
 import { AudioPlayer } from "@/components/AudioPlayer";
@@ -8,6 +8,7 @@ import { ScreenKeyboardAwareScrollView } from "@/components/ScreenKeyboardAwareS
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import { orderStore } from "@/utils/orderStore";
+import { showAlert, showError } from "@/utils/webAlert";
 
 export default function ConfirmAddItemsScreen() {
   const { theme } = useTheme();
@@ -58,7 +59,7 @@ export default function ConfirmAddItemsScreen() {
   }, [navigation, orderText, theme]);
 
   const handleCancel = () => {
-    Alert.alert(
+    showAlert(
       "Cancel",
       "Are you sure you want to cancel adding these items?",
       [
@@ -77,7 +78,7 @@ export default function ConfirmAddItemsScreen() {
       await orderStore.appendItems(existingOrderId, deduplicateMeals(orderText));
       navigation.navigate("OrderDetail", { orderId: existingOrderId });
     } catch (error) {
-      Alert.alert("Error", "Failed to add items. Please try again.");
+      showError("Error", "Failed to add items. Please try again.");
     }
   };
 

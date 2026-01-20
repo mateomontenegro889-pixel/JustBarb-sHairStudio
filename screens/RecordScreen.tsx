@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Alert } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
@@ -12,6 +12,7 @@ import { startRecording, stopRecording, requestAudioPermissions } from "@/utils/
 import { transcribeAudio, extractMealAndDrinkOrders } from "@/utils/transcription";
 import { getApiKey } from "@/utils/apiKeyStorage";
 import { impactAsync, ImpactFeedbackStyle } from "@/utils/haptics";
+import { showError } from "@/utils/webAlert";
 
 export default function RecordScreen() {
   const { paddingTop, paddingBottom } = useScreenInsets();
@@ -58,10 +59,9 @@ export default function RecordScreen() {
 
     if (!hasApiKey && !isRecording) {
       console.log('[RecordScreen] No API key, showing alert');
-      Alert.alert(
+      showError(
         "API Key Required",
-        "Please add your OpenAI API key in the Profile tab to use transcription.",
-        [{ text: "OK" }]
+        "Please add your OpenAI API key in the Profile tab to use transcription."
       );
       return;
     }
@@ -103,7 +103,7 @@ export default function RecordScreen() {
         setRecordingTime(0);
         
         const errorMessage = error.message || "Failed to transcribe audio. Please try again.";
-        Alert.alert("Transcription Error", errorMessage);
+        showError("Transcription Error", errorMessage);
       }
     } else {
       console.log('[RecordScreen] Starting recording...');
@@ -111,10 +111,9 @@ export default function RecordScreen() {
         const hasPermission = await requestAudioPermissions();
         console.log('[RecordScreen] Permission result:', hasPermission);
         if (!hasPermission) {
-          Alert.alert(
+          showError(
             "Permission Required",
-            "Please allow microphone access to record audio.",
-            [{ text: "OK" }]
+            "Please allow microphone access to record audio."
           );
           return;
         }
@@ -125,7 +124,7 @@ export default function RecordScreen() {
         setRecordingTime(0);
       } catch (error: any) {
         console.error('[RecordScreen] Start recording error:', error);
-        Alert.alert("Recording Error", error.message || "Failed to start recording");
+        showError("Recording Error", error.message || "Failed to start recording");
       }
     }
   };

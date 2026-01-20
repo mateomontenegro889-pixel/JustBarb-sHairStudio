@@ -1,5 +1,5 @@
 import React, { useState, useLayoutEffect } from "react";
-import { View, StyleSheet, TextInput, Pressable, Alert, ScrollView, Platform } from "react-native";
+import { View, StyleSheet, TextInput, Pressable, ScrollView, Platform } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
@@ -10,6 +10,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import { orderStore } from "@/utils/orderStore";
 import { Order } from "@/types/order";
+import { showAlert, showError } from "@/utils/webAlert";
 
 const TABLE_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 const GUEST_COUNTS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -77,7 +78,7 @@ export default function ConfirmOrderScreen() {
   }, [navigation, orderText, theme]);
 
   const handleCancel = () => {
-    Alert.alert(
+    showAlert(
       "Cancel Order",
       "Are you sure you want to cancel this order?",
       [
@@ -108,7 +109,7 @@ export default function ConfirmOrderScreen() {
       await orderStore.add(newOrder);
       navigation.goBack();
     } catch (error) {
-      Alert.alert("Error", "Failed to save order. Please try again.");
+      showError("Error", "Failed to save order. Please try again.");
     }
   };
 

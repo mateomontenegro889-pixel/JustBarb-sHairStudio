@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Pressable, Alert, TextInput, Modal, Platform } from "react-native";
+import { View, StyleSheet, Pressable, TextInput, Modal, Platform } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
 import { Card } from "@/components/Card";
@@ -8,6 +8,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import { getApiKey, saveApiKey, deleteApiKey } from "@/utils/apiKeyStorage";
 import { validateApiKey } from "@/utils/transcription";
+import { showAlert, showError } from "@/utils/webAlert";
 
 interface SettingsItemProps {
   icon: string;
@@ -89,12 +90,12 @@ export default function ProfileScreen() {
 
   const handleSaveStaffName = () => {
     if (!nameInput.trim()) {
-      Alert.alert("Invalid Name", "Please enter a valid staff name.");
+      showError("Invalid Name", "Please enter a valid staff name.");
       return;
     }
     setStaffName(nameInput.trim());
     setShowNameModal(false);
-    Alert.alert("Success", "Staff name updated successfully!");
+    showError("Success", "Staff name updated successfully!");
   };
 
   const handleSaveApiKey = async () => {
@@ -102,7 +103,7 @@ export default function ProfileScreen() {
     
     if (!validateApiKey(apiKeyInput)) {
       console.log('[ProfileScreen] API key validation failed');
-      Alert.alert(
+      showError(
         "Invalid API Key",
         "Please enter a valid OpenAI API key (starts with 'sk-')."
       );
@@ -116,15 +117,15 @@ export default function ProfileScreen() {
       setHasApiKey(true);
       setShowApiKeyModal(false);
       setApiKeyInput("");
-      Alert.alert("Success", "API key saved successfully!");
+      showError("Success", "API key saved successfully!");
     } catch (error) {
       console.error('[ProfileScreen] Save API key error:', error);
-      Alert.alert("Error", "Failed to save API key. Please try again.");
+      showError("Error", "Failed to save API key. Please try again.");
     }
   };
 
   const handleRemoveApiKey = () => {
-    Alert.alert(
+    showAlert(
       "Remove API Key",
       "Are you sure you want to remove your OpenAI API key?",
       [
@@ -136,9 +137,9 @@ export default function ProfileScreen() {
             try {
               await deleteApiKey();
               setHasApiKey(false);
-              Alert.alert("Removed", "API key removed successfully.");
+              showError("Removed", "API key removed successfully.");
             } catch (error) {
-              Alert.alert("Error", "Failed to remove API key.");
+              showError("Error", "Failed to remove API key.");
             }
           },
         },
