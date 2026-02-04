@@ -6,21 +6,28 @@ const OPENAI_API_KEY_STORAGE_KEY = 'openai_api_key';
 
 function getEnvApiKey(): string | null {
   try {
+    // Debug logging
+    console.log('[apiKeyStorage] Constants.expoConfig?.extra:', JSON.stringify(Constants.expoConfig?.extra));
+    
     let envKey = Constants.expoConfig?.extra?.openaiApiKey;
+    console.log('[apiKeyStorage] envKey from extra:', typeof envKey, envKey ? 'exists' : 'null');
     
     if (typeof envKey === 'string' && envKey.length > 0) {
       return envKey;
     }
     
+    // Try direct process.env access
     if (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_OPENAI_API_KEY) {
       const processKey = process.env.EXPO_PUBLIC_OPENAI_API_KEY;
+      console.log('[apiKeyStorage] processKey:', typeof processKey, processKey ? 'exists' : 'null');
       if (typeof processKey === 'string' && processKey.length > 0) {
         return processKey;
       }
     }
     
     return null;
-  } catch {
+  } catch (e) {
+    console.error('[apiKeyStorage] Error getting env key:', e);
     return null;
   }
 }
@@ -41,14 +48,19 @@ export async function saveApiKey(apiKey: string): Promise<void> {
 export async function getApiKey(): Promise<string | null> {
   try {
     const envKey = getEnvApiKey();
+    console.log('[apiKeyStorage] getApiKey - envKey found:', !!envKey);
     if (envKey) {
       return envKey;
     }
     
     if (Platform.OS === 'web') {
-      return localStorage.getItem(OPENAI_API_KEY_STORAGE_KEY);
+      const storedKey = localStorage.getItem(OPENAI_API_KEY_STORAGE_KEY);
+      console.log('[apiKeyStorage] getApiKey - storedKey from localStorage:', !!storedKey);
+      return storedKey;
     } else {
-      return await SecureStore.getItemAsync(OPENAI_API_KEY_STORAGE_KEY);
+      const storedKey = await SecureStore.getItemAsync(OPENAI_API_KEY_STORAGE_KEY);
+      console.log('[apiKeyStorage] getApiKey - storedKey from SecureStore:', !!storedKey);
+      return storedKey;
     }
   } catch (error) {
     console.error('Failed to get API key:', error);

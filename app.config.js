@@ -1,5 +1,6 @@
-export default {
-  expo: {
+export default ({ config }) => {
+  return {
+    ...config,
     name: "Order Transcribe",
     slug: "order-transcribe",
     version: "1.0.0",
@@ -48,5 +49,5 @@ export default {
     extra: {
       openaiApiKey: process.env.EXPO_PUBLIC_OPENAI_API_KEY || null
     }
-  }
+  };
 };
