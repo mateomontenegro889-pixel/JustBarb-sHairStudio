@@ -6,10 +6,20 @@ const OPENAI_API_KEY_STORAGE_KEY = 'openai_api_key';
 
 function getEnvApiKey(): string | null {
   try {
-    const envKey = Constants.expoConfig?.extra?.openaiApiKey || 
-                   process.env.EXPO_PUBLIC_OPENAI_API_KEY ||
-                   null;
-    return envKey;
+    let envKey = Constants.expoConfig?.extra?.openaiApiKey;
+    
+    if (typeof envKey === 'string' && envKey.length > 0) {
+      return envKey;
+    }
+    
+    if (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_OPENAI_API_KEY) {
+      const processKey = process.env.EXPO_PUBLIC_OPENAI_API_KEY;
+      if (typeof processKey === 'string' && processKey.length > 0) {
+        return processKey;
+      }
+    }
+    
+    return null;
   } catch {
     return null;
   }
