@@ -6,7 +6,7 @@ import { Card } from "@/components/Card";
 import { ScreenScrollView } from "@/components/ScreenScrollView";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
-import { getApiKey, saveApiKey, deleteApiKey } from "@/utils/apiKeyStorage";
+import { getApiKey, saveApiKey, deleteApiKey, hasEnvApiKey } from "@/utils/apiKeyStorage";
 import { validateApiKey } from "@/utils/transcription";
 import { showAlert, showError } from "@/utils/webAlert";
 
@@ -78,6 +78,7 @@ export default function ProfileScreen() {
   const [apiKeyInput, setApiKeyInput] = useState("");
   const [staffName, setStaffName] = useState("Chef");
   const [nameInput, setNameInput] = useState("Chef");
+  const isEnvKeyConfigured = hasEnvApiKey();
 
   const handleCheckApiKey = async () => {
     const apiKey = await getApiKey();
@@ -189,27 +190,40 @@ export default function ProfileScreen() {
           SETTINGS
         </ThemedText>
         <Card style={styles.settingsCard}>
-          <SettingsItem
-            icon="key"
-            label="OpenAI API Key"
-            value={hasApiKey ? "Active" : "Not Set"}
-            onPress={() => setShowApiKeyModal(true)}
-          />
-          {hasApiKey ? (
+          {isEnvKeyConfigured ? (
+            <SettingsItem
+              icon="key"
+              label="OpenAI API Key"
+              value="Pre-configured"
+              showChevron={false}
+            />
+          ) : (
             <>
-              <View style={[styles.separator, { backgroundColor: theme.border }]} />
               <SettingsItem
-                icon="trash-2"
-                label="Remove API Key"
-                onPress={handleRemoveApiKey}
-                showChevron={false}
-                destructive
+                icon="key"
+                label="OpenAI API Key"
+                value={hasApiKey ? "Active" : "Not Set"}
+                onPress={() => setShowApiKeyModal(true)}
               />
+              {hasApiKey ? (
+                <>
+                  <View style={[styles.separator, { backgroundColor: theme.border }]} />
+                  <SettingsItem
+                    icon="trash-2"
+                    label="Remove API Key"
+                    onPress={handleRemoveApiKey}
+                    showChevron={false}
+                    destructive
+                  />
+                </>
+              ) : null}
             </>
-          ) : null}
+          )}
         </Card>
         <ThemedText type="caption" style={[styles.helperText, { color: theme.textTertiary }]}>
-          Your API key is stored securely on this device and used only for audio transcription.
+          {isEnvKeyConfigured 
+            ? "API key is pre-configured for all users of this app."
+            : "Your API key is stored securely on this device and used only for audio transcription."}
         </ThemedText>
       </View>
 
