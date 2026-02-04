@@ -1,30 +1,18 @@
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
-import Constants from 'expo-constants';
+import { OPENAI_API_KEY } from './config';
 
 const OPENAI_API_KEY_STORAGE_KEY = 'openai_api_key';
 
 function getEnvApiKey(): string | null {
   try {
-    // Debug logging
-    console.log('[apiKeyStorage] Constants.expoConfig?.extra:', JSON.stringify(Constants.expoConfig?.extra));
-    
-    let envKey = Constants.expoConfig?.extra?.openaiApiKey;
-    console.log('[apiKeyStorage] envKey from extra:', typeof envKey, envKey ? 'exists' : 'null');
-    
-    if (typeof envKey === 'string' && envKey.length > 0) {
-      return envKey;
+    // Use the pre-configured API key from config (inlined at build time)
+    if (OPENAI_API_KEY && OPENAI_API_KEY.length > 0) {
+      console.log('[apiKeyStorage] Found key via config');
+      return OPENAI_API_KEY;
     }
     
-    // Try direct process.env access
-    if (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_OPENAI_API_KEY) {
-      const processKey = process.env.EXPO_PUBLIC_OPENAI_API_KEY;
-      console.log('[apiKeyStorage] processKey:', typeof processKey, processKey ? 'exists' : 'null');
-      if (typeof processKey === 'string' && processKey.length > 0) {
-        return processKey;
-      }
-    }
-    
+    console.log('[apiKeyStorage] No API key found in config');
     return null;
   } catch (e) {
     console.error('[apiKeyStorage] Error getting env key:', e);
