@@ -20,16 +20,12 @@ export default function HistoryStackNavigator() {
   const { theme, isDark } = useTheme();
 
   return (
-    <Stack.Navigator
-      screenOptions={{
-        ...getCommonScreenOptions({ theme, isDark }),
-      }}
-    >
+    <Stack.Navigator screenOptions={{ ...getCommonScreenOptions({ theme, isDark }) }}>
       <Stack.Screen
         name="HistoryList"
         component={HistoryListScreen}
         options={{
-          headerTitle: "Order History",
+          headerTitle: "Orders",
           headerTransparent: false,
         }}
       />

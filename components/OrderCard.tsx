@@ -5,6 +5,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { Card } from "@/components/Card";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
+import { ORDER_STATUS_CONFIG } from "@/types/order";
 
 interface OrderCardProps {
   orderText: string;
@@ -12,7 +13,7 @@ interface OrderCardProps {
   staffName: string;
   tableNumber?: number | null;
   guestCount?: number | null;
-  status?: 'open' | 'closed';
+  status?: string;
   onPress: () => void;
 }
 
@@ -22,12 +23,11 @@ export function OrderCard({
   staffName,
   tableNumber,
   guestCount,
-  status = 'open',
+  status = 'new',
   onPress,
 }: OrderCardProps) {
   const { theme } = useTheme();
-  const isOpen = status === 'open';
-  const accentColor = isOpen ? theme.primary : theme.success;
+  const statusConfig = ORDER_STATUS_CONFIG[status] || ORDER_STATUS_CONFIG['new'];
 
   return (
     <Pressable 
@@ -37,37 +37,32 @@ export function OrderCard({
         Platform.OS === 'web' ? { cursor: 'pointer' } : {},
       ]}
     >
-      <Card accentColor={accentColor} style={styles.card}>
+      <Card style={styles.card}>
         <View style={styles.container}>
           <View style={styles.content}>
             <View style={styles.headerRow}>
               <View style={styles.tableInfo}>
                 {tableNumber ? (
-                  <View style={[styles.tableBadge, { backgroundColor: theme.backgroundSecondary }]}>
-                    <Feather name="grid" size={12} color={theme.primary} />
+                  <View style={[styles.tableBadge, { backgroundColor: theme.primarySoft }]}>
+                    <Feather name="grid" size={11} color={theme.primary} />
                     <ThemedText style={[styles.badgeText, { color: theme.primary }]}>
-                      Table {tableNumber}
+                      T{tableNumber}
                     </ThemedText>
                   </View>
                 ) : null}
                 {guestCount ? (
                   <View style={[styles.tableBadge, { backgroundColor: theme.backgroundSecondary }]}>
-                    <Feather name="users" size={12} color={theme.textSecondary} />
+                    <Feather name="users" size={11} color={theme.textSecondary} />
                     <ThemedText style={[styles.badgeText, { color: theme.textSecondary }]}>
                       {guestCount}
                     </ThemedText>
                   </View>
                 ) : null}
               </View>
-              <View style={[
-                styles.statusBadge,
-                { backgroundColor: isOpen ? '#7C3AED20' : '#10B98120' }
-              ]}>
-                <ThemedText style={[
-                  styles.statusText,
-                  { color: isOpen ? theme.primary : theme.success }
-                ]}>
-                  {isOpen ? 'Open' : 'Completed'}
+              <View style={[styles.statusBadge, { backgroundColor: statusConfig.bgColor }]}>
+                <Feather name={statusConfig.icon as any} size={10} color={statusConfig.color} />
+                <ThemedText style={[styles.statusText, { color: statusConfig.color }]}>
+                  {statusConfig.label}
                 </ThemedText>
               </View>
             </View>
@@ -75,16 +70,18 @@ export function OrderCard({
               {orderText}
             </ThemedText>
             <View style={styles.metadata}>
+              <Feather name="clock" size={11} color={theme.textTertiary} />
               <ThemedText type="caption" style={{ color: theme.textTertiary }}>
                 {timestamp}
               </ThemedText>
               <View style={[styles.dot, { backgroundColor: theme.textTertiary }]} />
+              <Feather name="user" size={11} color={theme.textTertiary} />
               <ThemedText type="caption" style={{ color: theme.textTertiary }}>
                 {staffName}
               </ThemedText>
             </View>
           </View>
-          <Feather name="chevron-right" size={20} color={theme.textTertiary} />
+          <Feather name="chevron-right" size={18} color={theme.textTertiary} />
         </View>
       </Card>
     </Pressable>
@@ -112,37 +109,40 @@ const styles = StyleSheet.create({
   tableInfo: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
+    gap: 6,
   },
   tableBadge: {
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
     borderRadius: BorderRadius.full,
   },
   badgeText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: "600",
   },
   statusBadge: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: 4,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 3,
     borderRadius: BorderRadius.full,
   },
   statusText: {
     fontWeight: "600",
-    fontSize: 12,
+    fontSize: 11,
   },
   orderText: {
-    fontSize: 16,
-    lineHeight: 22,
+    fontSize: 15,
+    lineHeight: 21,
   },
   metadata: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
+    gap: 5,
   },
   dot: {
     width: 3,

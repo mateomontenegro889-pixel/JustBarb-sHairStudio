@@ -45,9 +45,7 @@ export default function ConfirmOrderScreen() {
             Platform.OS === 'web' ? { cursor: 'pointer' } : {},
           ]}
         >
-          <ThemedText type="body" style={{ color: theme.textSecondary }}>
-            Cancel
-          </ThemedText>
+          <ThemedText type="body" style={{ color: theme.textSecondary }}>Cancel</ThemedText>
         </Pressable>
       ),
       headerRight: () => (
@@ -58,19 +56,18 @@ export default function ConfirmOrderScreen() {
             styles.confirmButton,
             { 
               backgroundColor: orderText.trim() ? theme.primary : theme.backgroundSecondary,
-              opacity: pressed ? 0.8 : 1 
+              opacity: pressed ? 0.8 : 1,
             },
             Platform.OS === 'web' ? { cursor: 'pointer' } : {},
           ]}
         >
-          <ThemedText
-            style={{
-              color: orderText.trim() ? theme.buttonText : theme.textTertiary,
-              fontWeight: "600",
-              fontSize: 14,
-            }}
-          >
-            Confirm
+          <Feather name="check" size={14} color={orderText.trim() ? theme.buttonText : theme.textTertiary} />
+          <ThemedText style={{
+            color: orderText.trim() ? theme.buttonText : theme.textTertiary,
+            fontWeight: "600",
+            fontSize: 14,
+          }}>
+            Save
           </ThemedText>
         </Pressable>
       ),
@@ -78,31 +75,25 @@ export default function ConfirmOrderScreen() {
   }, [navigation, orderText, theme]);
 
   const handleCancel = () => {
-    showAlert(
-      "Cancel Order",
-      "Are you sure you want to cancel this order?",
-      [
-        { text: "No", style: "cancel" },
-        {
-          text: "Yes",
-          style: "destructive",
-          onPress: () => navigation.goBack(),
-        },
-      ]
-    );
+    showAlert("Cancel Order", "Are you sure you want to discard this order?", [
+      { text: "No", style: "cancel" },
+      { text: "Yes", style: "destructive", onPress: () => navigation.goBack() },
+    ]);
   };
 
   const handleConfirm = async () => {
+    const itemLines = orderText.split('\n').filter(l => l.trim().startsWith('-')).length;
     const newOrder: Order = {
       id: Date.now().toString(),
       audioUri,
       transcribedText: deduplicateMeals(orderText),
       timestamp: new Date().toISOString(),
-      staffName: staffName,
+      staffName,
       duration: "0:15",
       tableNumber,
       guestCount,
-      status: 'open',
+      status: 'new',
+      totalItems: itemLines,
     };
 
     try {
@@ -117,13 +108,13 @@ export default function ConfirmOrderScreen() {
     <ScreenKeyboardAwareScrollView contentContainerStyle={styles.container}>
       <Card style={styles.headerCard}>
         <View style={styles.headerCardContent}>
-          <View style={[styles.headerIcon, { backgroundColor: theme.primary + '20' }]}>
-            <Feather name="clipboard" size={24} color={theme.primary} />
+          <View style={[styles.headerIcon, { backgroundColor: theme.primarySoft }]}>
+            <Feather name="clipboard" size={22} color={theme.primary} />
           </View>
           <View style={styles.headerText}>
-            <ThemedText type="title">New Order</ThemedText>
+            <ThemedText type="title">Review Order</ThemedText>
             <ThemedText type="caption" style={{ color: theme.textSecondary }}>
-              Review and confirm the order details
+              Confirm details before saving
             </ThemedText>
           </View>
         </View>
@@ -146,22 +137,14 @@ export default function ConfirmOrderScreen() {
                     borderColor: tableNumber === num ? theme.primary : theme.border,
                     opacity: pressed ? 0.8 : 1,
                   },
-                  tableNumber === num && Platform.OS === 'ios' ? {
-                    shadowColor: theme.primary,
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.3,
-                    shadowRadius: 4,
-                  } : {},
                   Platform.OS === 'web' ? { cursor: 'pointer' } : {},
                 ]}
               >
-                <ThemedText
-                  style={{
-                    color: tableNumber === num ? theme.buttonText : theme.text,
-                    fontWeight: tableNumber === num ? "700" : "500",
-                    fontSize: 16,
-                  }}
-                >
+                <ThemedText style={{
+                  color: tableNumber === num ? theme.buttonText : theme.text,
+                  fontWeight: tableNumber === num ? "700" : "500",
+                  fontSize: 16,
+                }}>
                   {num}
                 </ThemedText>
               </Pressable>
@@ -191,18 +174,12 @@ export default function ConfirmOrderScreen() {
                 ]}
               >
                 <View style={styles.guestButtonContent}>
-                  <Feather
-                    name="users"
-                    size={12}
-                    color={guestCount === num ? theme.buttonText : theme.textSecondary}
-                  />
-                  <ThemedText
-                    style={{
-                      color: guestCount === num ? theme.buttonText : theme.text,
-                      fontWeight: guestCount === num ? "700" : "500",
-                      fontSize: 14,
-                    }}
-                  >
+                  <Feather name="users" size={11} color={guestCount === num ? theme.buttonText : theme.textSecondary} />
+                  <ThemedText style={{
+                    color: guestCount === num ? theme.buttonText : theme.text,
+                    fontWeight: guestCount === num ? "700" : "500",
+                    fontSize: 14,
+                  }}>
                     {num}
                   </ThemedText>
                 </View>
@@ -221,7 +198,7 @@ export default function ConfirmOrderScreen() {
 
       <View style={styles.section}>
         <ThemedText type="caption" style={[styles.sectionTitle, { color: theme.textTertiary }]}>
-          ORDER DETAILS
+          ORDER ITEMS
         </ThemedText>
         <Card style={styles.textInputCard}>
           <TextInput
@@ -229,12 +206,7 @@ export default function ConfirmOrderScreen() {
             onChangeText={setOrderText}
             multiline
             autoFocus
-            style={[
-              styles.textInput,
-              {
-                color: theme.text,
-              },
-            ]}
+            style={[styles.textInput, { color: theme.text }]}
             placeholderTextColor={theme.textTertiary}
             placeholder="Enter order details..."
           />
@@ -242,7 +214,7 @@ export default function ConfirmOrderScreen() {
       </View>
 
       <View style={styles.timestampContainer}>
-        <Feather name="clock" size={14} color={theme.textTertiary} />
+        <Feather name="clock" size={13} color={theme.textTertiary} />
         <ThemedText type="caption" style={{ color: theme.textTertiary }}>
           {new Date().toLocaleString()}
         </ThemedText>
@@ -252,13 +224,8 @@ export default function ConfirmOrderScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: Spacing.xl,
-    gap: Spacing["2xl"],
-  },
-  headerCard: {
-    padding: Spacing.xl,
-  },
+  container: { padding: Spacing.xl, gap: Spacing["2xl"] },
+  headerCard: { padding: Spacing.xl },
   headerCardContent: {
     flexDirection: "row",
     alignItems: "center",
@@ -271,26 +238,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  headerText: {
-    flex: 1,
-    gap: Spacing.xs,
-  },
-  section: {
-    gap: Spacing.md,
-  },
+  headerText: { flex: 1, gap: Spacing.xs },
+  section: { gap: Spacing.md },
   sectionTitle: {
     textTransform: "uppercase",
     letterSpacing: 1,
-    fontWeight: "500",
+    fontWeight: "600",
   },
   selectionRow: {
     flexDirection: "row",
     gap: Spacing.sm,
   },
   selectionButton: {
-    width: 52,
-    height: 52,
-    borderRadius: BorderRadius.lg,
+    width: 50,
+    height: 50,
+    borderRadius: BorderRadius.md,
     borderWidth: 1.5,
     justifyContent: "center",
     alignItems: "center",
@@ -300,15 +262,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 4,
   },
-  textInputCard: {
-    padding: 0,
-  },
+  textInputCard: { padding: 0 },
   textInput: {
     padding: Spacing.lg,
-    fontSize: 16,
-    minHeight: 150,
+    fontSize: 15,
+    minHeight: 180,
     textAlignVertical: "top",
-    lineHeight: 24,
+    lineHeight: 22,
   },
   timestampContainer: {
     flexDirection: "row",
@@ -317,6 +277,9 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   confirmButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.full,

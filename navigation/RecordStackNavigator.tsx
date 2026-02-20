@@ -2,7 +2,6 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import RecordScreen from "@/screens/RecordScreen";
 import ConfirmOrderScreen from "@/screens/ConfirmOrderScreen";
-import { HeaderTitle } from "@/components/HeaderTitle";
 import { useTheme } from "@/hooks/useTheme";
 import { getCommonScreenOptions } from "@/navigation/screenOptions";
 
@@ -17,16 +16,13 @@ export default function RecordStackNavigator() {
   const { theme, isDark } = useTheme();
 
   return (
-    <Stack.Navigator
-      screenOptions={{
-        ...getCommonScreenOptions({ theme, isDark }),
-      }}
-    >
+    <Stack.Navigator screenOptions={{ ...getCommonScreenOptions({ theme, isDark }) }}>
       <Stack.Screen
         name="Record"
         component={RecordScreen}
         options={{
-          headerTitle: () => <HeaderTitle title="Order Transcribe" />,
+          headerTitle: "New Order",
+          headerTransparent: false,
         }}
       />
       <Stack.Screen

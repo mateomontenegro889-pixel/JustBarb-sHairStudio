@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { RecordButton } from "@/components/RecordButton";
@@ -13,6 +14,15 @@ import { transcribeAudio, extractMealAndDrinkOrders } from "@/utils/transcriptio
 import { getApiKey } from "@/utils/apiKeyStorage";
 import { impactAsync, ImpactFeedbackStyle } from "@/utils/haptics";
 import { showError } from "@/utils/webAlert";
+import { Feather } from "@expo/vector-icons";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withSequence,
+  withTiming,
+  withSpring,
+} from "react-native-reanimated";
 
 export default function RecordScreen() {
   const { paddingTop, paddingBottom } = useScreenInsets();
@@ -22,6 +32,28 @@ export default function RecordScreen() {
   const [recordingTime, setRecordingTime] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [hasApiKey, setHasApiKey] = useState(false);
+  const [processingStep, setProcessingStep] = useState('');
+
+  const pulseOpacity = useSharedValue(0.3);
+
+  useEffect(() => {
+    if (isRecording) {
+      pulseOpacity.value = withRepeat(
+        withSequence(
+          withTiming(0.6, { duration: 800 }),
+          withTiming(0.2, { duration: 800 })
+        ),
+        -1,
+        false
+      );
+    } else {
+      pulseOpacity.value = withTiming(0.3);
+    }
+  }, [isRecording]);
+
+  const pulseStyle = useAnimatedStyle(() => ({
+    opacity: pulseOpacity.value,
+  }));
 
   useFocusEffect(
     React.useCallback(() => {
@@ -53,12 +85,9 @@ export default function RecordScreen() {
   };
 
   const handleRecordPress = async () => {
-    console.log('[RecordScreen] handleRecordPress called, isRecording:', isRecording, 'hasApiKey:', hasApiKey);
-    
     impactAsync(ImpactFeedbackStyle.Medium);
 
     if (!hasApiKey && !isRecording) {
-      console.log('[RecordScreen] No API key, showing alert');
       showError(
         "API Key Required",
         "Please add your OpenAI API key in the Profile tab to use transcription."
@@ -67,147 +96,149 @@ export default function RecordScreen() {
     }
 
     if (isRecording) {
-      console.log('[RecordScreen] Stopping recording...');
       setIsRecording(false);
       setIsProcessing(true);
+      setProcessingStep('Saving recording...');
 
       try {
         const audioUri = await stopRecording();
-        console.log('[RecordScreen] Recording stopped, audioUri:', audioUri);
-        
-        if (!audioUri) {
-          throw new Error("Failed to save recording");
-        }
+        if (!audioUri) throw new Error("Failed to save recording");
 
         const apiKey = await getApiKey();
-        if (!apiKey) {
-          throw new Error("API key not found");
-        }
+        if (!apiKey) throw new Error("API key not found");
 
-        console.log('[RecordScreen] Starting transcription...');
+        setProcessingStep('Transcribing audio...');
         const transcribedText = await transcribeAudio(audioUri, apiKey);
-        console.log('[RecordScreen] Transcription complete:', transcribedText);
+        
+        setProcessingStep('Extracting order items...');
         const cleanedText = await extractMealAndDrinkOrders(transcribedText, apiKey);
-        console.log('[RecordScreen] Cleaned text:', cleanedText);
 
         setIsProcessing(false);
         setRecordingTime(0);
+        setProcessingStep('');
 
         navigation.navigate("ConfirmOrder", {
           audioUri,
           transcribedText: cleanedText,
         });
       } catch (error: any) {
-        console.error('[RecordScreen] Error:', error);
         setIsProcessing(false);
         setRecordingTime(0);
-        
-        const errorMessage = error.message || "Failed to transcribe audio. Please try again.";
-        showError("Transcription Error", errorMessage);
+        setProcessingStep('');
+        showError("Transcription Error", error.message || "Failed to transcribe audio. Please try again.");
       }
     } else {
-      console.log('[RecordScreen] Starting recording...');
       try {
         const hasPermission = await requestAudioPermissions();
-        console.log('[RecordScreen] Permission result:', hasPermission);
         if (!hasPermission) {
-          showError(
-            "Permission Required",
-            "Please allow microphone access to record audio."
-          );
+          showError("Permission Required", "Please allow microphone access to record audio.");
           return;
         }
-
         await startRecording();
-        console.log('[RecordScreen] Recording started');
         setIsRecording(true);
         setRecordingTime(0);
       } catch (error: any) {
-        console.error('[RecordScreen] Start recording error:', error);
         showError("Recording Error", error.message || "Failed to start recording");
       }
     }
   };
 
-  const getStatusText = (): string => {
-    if (isProcessing) return "Processing your order...";
-    if (isRecording) return "Listening...";
-    return "Tap the button to start recording";
-  };
-
   return (
-    <ThemedView
-      style={[
-        styles.container,
-        {
-          paddingTop,
-          paddingBottom,
-        },
-      ]}
-    >
+    <ThemedView style={[styles.container, { paddingTop, paddingBottom }]}>
       <View style={styles.content}>
-        <View style={styles.headerSection}>
-          <ThemedText type="title" style={styles.title}>
-            New Order
-          </ThemedText>
-          <ThemedText type="caption" style={styles.subtitle}>
-            Speak clearly to record the order
-          </ThemedText>
-        </View>
-
-        {isRecording ? (
-          <Card style={styles.timerCard}>
-            <View style={styles.timerContent}>
-              <View style={[styles.recordingIndicator, { backgroundColor: theme.recording }]} />
-              <ThemedText type="title" style={[styles.timer, { color: theme.primary }]}>
-                {formatTime(recordingTime)}
+        {isProcessing ? (
+          <View style={styles.processingContainer}>
+            <LinearGradient
+              colors={[theme.gradientStart + '15', theme.gradientEnd + '15']}
+              style={styles.processingGlow}
+            />
+            <View style={[styles.processingIcon, { backgroundColor: theme.primarySoft }]}>
+              <ActivityIndicator size="large" color={theme.primary} />
+            </View>
+            <ThemedText type="title" style={[styles.processingTitle, { color: theme.text }]}>
+              Processing Order
+            </ThemedText>
+            <ThemedText type="caption" style={{ color: theme.textSecondary, textAlign: 'center' }}>
+              {processingStep}
+            </ThemedText>
+          </View>
+        ) : (
+          <>
+            <View style={styles.headerSection}>
+              <ThemedText style={[styles.title, { color: theme.text }]}>
+                {isRecording ? 'Recording...' : 'New Order'}
+              </ThemedText>
+              <ThemedText type="caption" style={{ color: theme.textSecondary, textAlign: 'center' }}>
+                {isRecording ? 'Speak clearly into the microphone' : 'Tap the button to start recording an order'}
               </ThemedText>
             </View>
-          </Card>
-        ) : null}
 
-        <View style={styles.buttonContainer}>
-          <RecordButton
-            isRecording={isRecording}
-            onPress={handleRecordPress}
-          />
-        </View>
+            {isRecording ? (
+              <Card style={styles.timerCard}>
+                <View style={styles.timerContent}>
+                  <View style={[styles.recordingDot, { backgroundColor: theme.recording }]} />
+                  <ThemedText style={[styles.timer, { color: theme.primary }]}>
+                    {formatTime(recordingTime)}
+                  </ThemedText>
+                </View>
+              </Card>
+            ) : null}
 
-        <View style={styles.waveformContainer}>
-          {isRecording ? (
-            <View style={styles.waveform}>
-              {[...Array(15)].map((_, i) => (
-                <View
-                  key={i}
-                  style={[
-                    styles.waveBar,
-                    {
-                      height: Math.random() * 40 + 10,
-                      backgroundColor: theme.primary,
-                    },
-                  ]}
-                />
-              ))}
+            <View style={styles.buttonArea}>
+              {isRecording ? (
+                <Animated.View style={[styles.pulseRing, { borderColor: theme.recording }, pulseStyle]} />
+              ) : null}
+              <RecordButton isRecording={isRecording} onPress={handleRecordPress} />
             </View>
-          ) : null}
-        </View>
 
-        <ThemedText type="body" style={[styles.statusText, { color: theme.textSecondary }]}>
-          {getStatusText()}
-        </ThemedText>
+            {isRecording ? (
+              <View style={styles.waveform}>
+                {[...Array(20)].map((_, i) => (
+                  <View
+                    key={i}
+                    style={[
+                      styles.waveBar,
+                      {
+                        height: Math.random() * 50 + 8,
+                        backgroundColor: theme.primary,
+                        opacity: 0.3 + Math.random() * 0.7,
+                      },
+                    ]}
+                  />
+                ))}
+              </View>
+            ) : null}
 
-        {!hasApiKey ? (
-          <Card accentColor={theme.warning} style={styles.warningCard}>
-            <View style={styles.warningContent}>
-              <ThemedText style={{ color: theme.warning, fontWeight: "600" }}>
-                API Key Required
-              </ThemedText>
-              <ThemedText type="caption">
-                Go to Profile tab to add your OpenAI API key
-              </ThemedText>
-            </View>
-          </Card>
-        ) : null}
+            {!hasApiKey ? (
+              <Card accentColor={theme.warning} style={styles.warningCard}>
+                <View style={styles.warningContent}>
+                  <View style={[styles.warningIcon, { backgroundColor: theme.warningLight }]}>
+                    <Feather name="alert-triangle" size={16} color={theme.warning} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <ThemedText style={{ color: theme.warning, fontWeight: "600", fontSize: 14 }}>
+                      API Key Required
+                    </ThemedText>
+                    <ThemedText type="caption" style={{ color: theme.textSecondary }}>
+                      Go to Profile tab to configure your API key
+                    </ThemedText>
+                  </View>
+                </View>
+              </Card>
+            ) : null}
+
+            {!isRecording && hasApiKey ? (
+              <View style={styles.tipContainer}>
+                <View style={[styles.tipIcon, { backgroundColor: theme.primarySoft }]}>
+                  <Feather name="info" size={14} color={theme.primary} />
+                </View>
+                <ThemedText type="caption" style={{ color: theme.textSecondary, flex: 1 }}>
+                  Speak naturally - AI will extract and organize order items automatically
+                </ThemedText>
+              </View>
+            ) : null}
+          </>
+        )}
       </View>
     </ThemedView>
   );
@@ -229,14 +260,12 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   title: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: "700",
-  },
-  subtitle: {
-    textAlign: "center",
+    letterSpacing: -0.5,
   },
   timerCard: {
-    paddingHorizontal: Spacing["2xl"],
+    paddingHorizontal: Spacing["3xl"],
     paddingVertical: Spacing.lg,
   },
   timerContent: {
@@ -244,39 +273,87 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: Spacing.md,
   },
-  recordingIndicator: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+  recordingDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
   },
   timer: {
-    fontSize: 36,
+    fontSize: 40,
     fontWeight: "700",
+    fontVariant: ['tabular-nums'],
   },
-  buttonContainer: {
-    marginVertical: Spacing.xl,
+  buttonArea: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: Spacing.lg,
   },
-  waveformContainer: {
-    height: 60,
-    justifyContent: "center",
+  pulseRing: {
+    position: 'absolute',
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    borderWidth: 2,
   },
   waveform: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
-    height: 50,
+    gap: 3,
+    height: 60,
+    paddingHorizontal: Spacing.xl,
   },
   waveBar: {
-    width: 4,
+    width: 3,
     borderRadius: 2,
-  },
-  statusText: {
-    textAlign: "center",
   },
   warningCard: {
     padding: Spacing.lg,
+    marginHorizontal: Spacing.xl,
   },
   warningContent: {
-    gap: Spacing.xs,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  warningIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  processingContainer: {
+    alignItems: 'center',
+    gap: Spacing.xl,
+  },
+  processingGlow: {
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+  },
+  processingIcon: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  processingTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+  },
+  tipContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing["2xl"],
+  },
+  tipIcon: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
