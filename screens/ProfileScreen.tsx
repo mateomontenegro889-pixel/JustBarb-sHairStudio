@@ -1,5 +1,12 @@
 import React, { useState, useCallback } from "react";
-import { View, StyleSheet, Pressable, TextInput, Modal, Platform } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  TextInput,
+  Modal,
+  Platform,
+} from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -8,7 +15,12 @@ import { Card } from "@/components/Card";
 import { ScreenScrollView } from "@/components/ScreenScrollView";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
-import { getApiKey, saveApiKey, deleteApiKey, hasEnvApiKey } from "@/utils/apiKeyStorage";
+import {
+  getApiKey,
+  saveApiKey,
+  deleteApiKey,
+  hasEnvApiKey,
+} from "@/utils/apiKeyStorage";
 import { validateApiKey } from "@/utils/transcription";
 import { showAlert, showError } from "@/utils/webAlert";
 import { orderStore } from "@/utils/orderStore";
@@ -23,7 +35,15 @@ interface SettingsItemProps {
   valueColor?: string;
 }
 
-function SettingsItem({ icon, label, value, onPress, showChevron = true, destructive = false, valueColor }: SettingsItemProps) {
+function SettingsItem({
+  icon,
+  label,
+  value,
+  onPress,
+  showChevron = true,
+  destructive = false,
+  valueColor,
+}: SettingsItemProps) {
   const { theme } = useTheme();
   return (
     <Pressable
@@ -32,21 +52,45 @@ function SettingsItem({ icon, label, value, onPress, showChevron = true, destruc
       style={({ pressed }) => [
         styles.settingsItem,
         { opacity: pressed ? 0.6 : 1 },
-        Platform.OS === 'web' ? { cursor: onPress ? 'pointer' : undefined } : {},
+        Platform.OS === "web"
+          ? { cursor: onPress ? "pointer" : undefined }
+          : {},
       ]}
     >
       <View style={styles.settingsItemLeft}>
-        <View style={[styles.iconContainer, { backgroundColor: destructive ? '#FEE2E2' : theme.primarySoft }]}>
-          <Feather name={icon as any} size={16} color={destructive ? theme.error : theme.primary} />
+        <View
+          style={[
+            styles.iconContainer,
+            { backgroundColor: destructive ? "#FEE2E2" : theme.primarySoft },
+          ]}
+        >
+          <Feather
+            name={icon as any}
+            size={16}
+            color={destructive ? theme.error : theme.primary}
+          />
         </View>
-        <ThemedText style={[{ fontSize: 15 }, destructive ? { color: theme.error } : undefined]}>
+        <ThemedText
+          style={[
+            { fontSize: 15 },
+            destructive ? { color: theme.error } : undefined,
+          ]}
+        >
           {label}
         </ThemedText>
       </View>
       <View style={styles.settingsItemRight}>
         {value ? (
-          <View style={[styles.valueBadge, { backgroundColor: theme.backgroundSecondary }]}>
-            <ThemedText type="caption" style={{ color: valueColor || theme.primary, fontWeight: '600' }}>
+          <View
+            style={[
+              styles.valueBadge,
+              { backgroundColor: theme.backgroundSecondary },
+            ]}
+          >
+            <ThemedText
+              type="caption"
+              style={{ color: valueColor || theme.primary, fontWeight: "600" }}
+            >
               {value}
             </ThemedText>
           </View>
@@ -67,14 +111,18 @@ export default function ProfileScreen() {
   const [apiKeyInput, setApiKeyInput] = useState("");
   const [staffName, setStaffName] = useState("Chef");
   const [nameInput, setNameInput] = useState("Chef");
-  const [stats, setStats] = useState({ totalOrders: 0, todayOrders: 0, completedOrders: 0 });
+  const [stats, setStats] = useState({
+    totalOrders: 0,
+    todayOrders: 0,
+    completedOrders: 0,
+  });
   const isEnvKeyConfigured = hasEnvApiKey();
 
   useFocusEffect(
     useCallback(() => {
       handleCheckApiKey();
       loadStats();
-    }, [])
+    }, []),
   );
 
   const handleCheckApiKey = async () => {
@@ -84,7 +132,11 @@ export default function ProfileScreen() {
 
   const loadStats = async () => {
     const s = await orderStore.getStats();
-    setStats({ totalOrders: s.totalOrders, todayOrders: s.todayOrders, completedOrders: s.completedOrders });
+    setStats({
+      totalOrders: s.totalOrders,
+      todayOrders: s.todayOrders,
+      completedOrders: s.completedOrders,
+    });
   };
 
   const handleSaveStaffName = () => {
@@ -98,7 +150,10 @@ export default function ProfileScreen() {
 
   const handleSaveApiKey = async () => {
     if (!validateApiKey(apiKeyInput)) {
-      showError("Invalid API Key", "Please enter a valid OpenAI API key (starts with 'sk-').");
+      showError(
+        "Invalid API Key",
+        "Please enter a valid OpenAI API key (starts with 'sk-').",
+      );
       return;
     }
     try {
@@ -112,30 +167,37 @@ export default function ProfileScreen() {
   };
 
   const handleRemoveApiKey = () => {
-    showAlert("Remove API Key", "Are you sure you want to remove your OpenAI API key?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Remove",
-        style: "destructive",
-        onPress: async () => {
-          try {
-            await deleteApiKey();
-            setHasApiKey(false);
-          } catch (error) {
-            showError("Error", "Failed to remove API key.");
-          }
+    showAlert(
+      "Remove API Key",
+      "Are you sure you want to remove your OpenAI API key?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Remove",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await deleteApiKey();
+              setHasApiKey(false);
+            } catch (error) {
+              showError("Error", "Failed to remove API key.");
+            }
+          },
         },
-      },
-    ]);
+      ],
+    );
   };
 
   return (
     <ScreenScrollView contentContainerStyle={styles.container}>
       <Pressable
-        onPress={() => { setNameInput(staffName); setShowNameModal(true); }}
+        onPress={() => {
+          setNameInput(staffName);
+          setShowNameModal(true);
+        }}
         style={({ pressed }) => [
           { opacity: pressed ? 0.9 : 1 },
-          Platform.OS === 'web' ? { cursor: 'pointer' } : {},
+          Platform.OS === "web" ? { cursor: "pointer" } : {},
         ]}
       >
         <LinearGradient
@@ -160,17 +222,23 @@ export default function ProfileScreen() {
           </View>
           <View style={styles.profileStats}>
             <View style={styles.profileStat}>
-              <ThemedText style={styles.profileStatValue}>{stats.totalOrders}</ThemedText>
+              <ThemedText style={styles.profileStatValue}>
+                {stats.totalOrders}
+              </ThemedText>
               <ThemedText style={styles.profileStatLabel}>Total</ThemedText>
             </View>
             <View style={[styles.profileStatDivider]} />
             <View style={styles.profileStat}>
-              <ThemedText style={styles.profileStatValue}>{stats.todayOrders}</ThemedText>
+              <ThemedText style={styles.profileStatValue}>
+                {stats.todayOrders}
+              </ThemedText>
               <ThemedText style={styles.profileStatLabel}>Today</ThemedText>
             </View>
             <View style={[styles.profileStatDivider]} />
             <View style={styles.profileStat}>
-              <ThemedText style={styles.profileStatValue}>{stats.completedOrders}</ThemedText>
+              <ThemedText style={styles.profileStatValue}>
+                {stats.completedOrders}
+              </ThemedText>
               <ThemedText style={styles.profileStatLabel}>Done</ThemedText>
             </View>
           </View>
@@ -178,7 +246,10 @@ export default function ProfileScreen() {
       </Pressable>
 
       <View style={styles.section}>
-        <ThemedText type="caption" style={[styles.sectionTitle, { color: theme.textTertiary }]}>
+        <ThemedText
+          type="caption"
+          style={[styles.sectionTitle, { color: theme.textTertiary }]}
+        >
           CONFIGURATION
         </ThemedText>
         <Card style={styles.settingsCard}>
@@ -201,7 +272,12 @@ export default function ProfileScreen() {
               />
               {hasApiKey ? (
                 <>
-                  <View style={[styles.separator, { backgroundColor: theme.borderLight }]} />
+                  <View
+                    style={[
+                      styles.separator,
+                      { backgroundColor: theme.borderLight },
+                    ]}
+                  />
                   <SettingsItem
                     icon="trash-2"
                     label="Remove API Key"
@@ -214,7 +290,10 @@ export default function ProfileScreen() {
             </>
           )}
         </Card>
-        <ThemedText type="caption" style={[styles.helperText, { color: theme.textTertiary }]}>
+        <ThemedText
+          type="caption"
+          style={[styles.helperText, { color: theme.textTertiary }]}
+        >
           {isEnvKeyConfigured
             ? "API key is pre-configured for all users. No setup needed."
             : "Your API key is stored securely and used only for audio transcription."}
@@ -222,31 +301,70 @@ export default function ProfileScreen() {
       </View>
 
       <View style={styles.section}>
-        <ThemedText type="caption" style={[styles.sectionTitle, { color: theme.textTertiary }]}>
+        <ThemedText
+          type="caption"
+          style={[styles.sectionTitle, { color: theme.textTertiary }]}
+        >
           PREFERENCES
         </ThemedText>
         <Card style={styles.settingsCard}>
-          <SettingsItem icon="user" label="Staff Name" value={staffName} onPress={() => { setNameInput(staffName); setShowNameModal(true); }} />
+          <SettingsItem
+            icon="user"
+            label="Staff Name"
+            value={staffName}
+            onPress={() => {
+              setNameInput(staffName);
+              setShowNameModal(true);
+            }}
+          />
         </Card>
       </View>
 
       <View style={styles.section}>
-        <ThemedText type="caption" style={[styles.sectionTitle, { color: theme.textTertiary }]}>
+        <ThemedText
+          type="caption"
+          style={[styles.sectionTitle, { color: theme.textTertiary }]}
+        >
           ABOUT
         </ThemedText>
         <Card style={styles.settingsCard}>
-          <SettingsItem icon="info" label="Version" value="2.0 Pro" showChevron={false} />
-          <View style={[styles.separator, { backgroundColor: theme.borderLight }]} />
-          <SettingsItem icon="shield" label="Privacy" value="On-device" showChevron={false} />
+          <SettingsItem
+            icon="info"
+            label="Version"
+            value="2.0 Pro"
+            showChevron={false}
+          />
+          <View
+            style={[styles.separator, { backgroundColor: theme.borderLight }]}
+          />
+          <SettingsItem
+            icon="shield"
+            label="Privacy"
+            value="On-device"
+            showChevron={false}
+          />
         </Card>
       </View>
 
-      <Modal visible={showNameModal} transparent animationType="fade" onRequestClose={() => setShowNameModal(false)}>
+      <Modal
+        visible={showNameModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowNameModal(false)}
+      >
         <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { backgroundColor: theme.backgroundDefault }]}>
+          <View
+            style={[
+              styles.modalContent,
+              { backgroundColor: theme.backgroundDefault },
+            ]}
+          >
             <View style={styles.modalHeader}>
               <ThemedText type="title">Edit Staff Name</ThemedText>
-              <Pressable onPress={() => setShowNameModal(false)} style={Platform.OS === 'web' ? { cursor: 'pointer' } : {}}>
+              <Pressable
+                onPress={() => setShowNameModal(false)}
+                style={Platform.OS === "web" ? { cursor: "pointer" } : {}}
+              >
                 <Feather name="x" size={24} color={theme.textSecondary} />
               </Pressable>
             </View>
@@ -255,34 +373,90 @@ export default function ProfileScreen() {
               onChangeText={setNameInput}
               placeholder="Enter your name..."
               placeholderTextColor={theme.textTertiary}
-              style={[styles.modalInput, { backgroundColor: theme.backgroundSecondary, color: theme.text, borderColor: theme.borderLight }]}
+              style={[
+                styles.modalInput,
+                {
+                  backgroundColor: theme.backgroundSecondary,
+                  color: theme.text,
+                  borderColor: theme.borderLight,
+                },
+              ]}
             />
             <View style={styles.modalButtons}>
-              <Pressable onPress={() => setShowNameModal(false)} style={({ pressed }) => [styles.modalButton, styles.cancelButton, { borderColor: theme.border, opacity: pressed ? 0.6 : 1 }, Platform.OS === 'web' ? { cursor: 'pointer' } : {}]}>
+              <Pressable
+                onPress={() => setShowNameModal(false)}
+                style={({ pressed }) => [
+                  styles.modalButton,
+                  styles.cancelButton,
+                  { borderColor: theme.border, opacity: pressed ? 0.6 : 1 },
+                  Platform.OS === "web" ? { cursor: "pointer" } : {},
+                ]}
+              >
                 <ThemedText>Cancel</ThemedText>
               </Pressable>
-              <Pressable onPress={handleSaveStaffName} style={({ pressed }) => [styles.modalButton, { backgroundColor: theme.primary, opacity: pressed ? 0.8 : 1 }, Platform.OS === 'web' ? { cursor: 'pointer' } : {}]}>
-                <ThemedText style={{ color: theme.buttonText, fontWeight: "600" }}>Save</ThemedText>
+              <Pressable
+                onPress={handleSaveStaffName}
+                style={({ pressed }) => [
+                  styles.modalButton,
+                  {
+                    backgroundColor: theme.primary,
+                    opacity: pressed ? 0.8 : 1,
+                  },
+                  Platform.OS === "web" ? { cursor: "pointer" } : {},
+                ]}
+              >
+                <ThemedText
+                  style={{ color: theme.buttonText, fontWeight: "600" }}
+                >
+                  Save
+                </ThemedText>
               </Pressable>
             </View>
           </View>
         </View>
       </Modal>
 
-      <Modal visible={showApiKeyModal} transparent animationType="fade" onRequestClose={() => setShowApiKeyModal(false)}>
-        <Pressable style={styles.modalOverlay} onPress={() => setShowApiKeyModal(false)}>
-          <Pressable style={[styles.modalContent, { backgroundColor: theme.backgroundDefault }]} onPress={(e) => e.stopPropagation()}>
+      <Modal
+        visible={showApiKeyModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowApiKeyModal(false)}
+      >
+        <Pressable
+          style={styles.modalOverlay}
+          onPress={() => setShowApiKeyModal(false)}
+        >
+          <Pressable
+            style={[
+              styles.modalContent,
+              { backgroundColor: theme.backgroundDefault },
+            ]}
+            onPress={(e) => e.stopPropagation()}
+          >
             <View style={styles.modalHeader}>
               <ThemedText type="title">OpenAI API Key</ThemedText>
-              <Pressable onPress={() => setShowApiKeyModal(false)} style={Platform.OS === 'web' ? { cursor: 'pointer' } : {}}>
+              <Pressable
+                onPress={() => setShowApiKeyModal(false)}
+                style={Platform.OS === "web" ? { cursor: "pointer" } : {}}
+              >
                 <Feather name="x" size={24} color={theme.textSecondary} />
               </Pressable>
             </View>
-            <ThemedText type="body" style={[styles.modalDescription, { color: theme.textSecondary }]}>
+            <ThemedText
+              type="body"
+              style={[styles.modalDescription, { color: theme.textSecondary }]}
+            >
               Enter your OpenAI API key to enable audio transcription.
             </ThemedText>
             <TextInput
-              style={[styles.modalInput, { backgroundColor: theme.backgroundSecondary, color: theme.text, borderColor: theme.borderLight }]}
+              style={[
+                styles.modalInput,
+                {
+                  backgroundColor: theme.backgroundSecondary,
+                  color: theme.text,
+                  borderColor: theme.borderLight,
+                },
+              ]}
               value={apiKeyInput}
               onChangeText={setApiKeyInput}
               placeholder="sk-..."
@@ -295,11 +469,36 @@ export default function ProfileScreen() {
               Get your API key from platform.openai.com/api-keys
             </ThemedText>
             <View style={styles.modalButtons}>
-              <Pressable style={({ pressed }) => [styles.modalButton, styles.cancelButton, { borderColor: theme.border, opacity: pressed ? 0.6 : 1 }, Platform.OS === 'web' ? { cursor: 'pointer' } : {}]} onPress={() => { setShowApiKeyModal(false); setApiKeyInput(""); }}>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.modalButton,
+                  styles.cancelButton,
+                  { borderColor: theme.border, opacity: pressed ? 0.6 : 1 },
+                  Platform.OS === "web" ? { cursor: "pointer" } : {},
+                ]}
+                onPress={() => {
+                  setShowApiKeyModal(false);
+                  setApiKeyInput("");
+                }}
+              >
                 <ThemedText>Cancel</ThemedText>
               </Pressable>
-              <Pressable style={({ pressed }) => [styles.modalButton, { backgroundColor: theme.primary, opacity: pressed ? 0.8 : 1 }, Platform.OS === 'web' ? { cursor: 'pointer' } : {}]} onPress={handleSaveApiKey}>
-                <ThemedText style={{ color: theme.buttonText, fontWeight: "600" }}>Save</ThemedText>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.modalButton,
+                  {
+                    backgroundColor: theme.primary,
+                    opacity: pressed ? 0.8 : 1,
+                  },
+                  Platform.OS === "web" ? { cursor: "pointer" } : {},
+                ]}
+                onPress={handleSaveApiKey}
+              >
+                <ThemedText
+                  style={{ color: theme.buttonText, fontWeight: "600" }}
+                >
+                  Save
+                </ThemedText>
               </Pressable>
             </View>
           </Pressable>
@@ -315,7 +514,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.xl,
     padding: Spacing["2xl"],
     gap: Spacing.xl,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   profileHeader: {
     flexDirection: "row",
@@ -326,54 +525,54 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: "rgba(255,255,255,0.2)",
     justifyContent: "center",
     alignItems: "center",
   },
   avatarText: {
     fontSize: 22,
     fontWeight: "700",
-    color: '#FFFFFF',
+    color: "#FFFFFF",
   },
   profileInfo: { flex: 1, gap: 2 },
   profileName: {
     fontSize: 20,
-    fontWeight: '700',
-    color: '#FFFFFF',
+    fontWeight: "700",
+    color: "#FFFFFF",
   },
   profileRole: {
     fontSize: 13,
-    color: 'rgba(255,255,255,0.7)',
+    color: "rgba(255,255,255,0.7)",
   },
   editIcon: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(255,255,255,0.15)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   profileStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    flexDirection: "row",
+    justifyContent: "space-around",
+    backgroundColor: "rgba(255,255,255,0.1)",
     borderRadius: BorderRadius.md,
     paddingVertical: Spacing.md,
   },
-  profileStat: { alignItems: 'center', gap: 2 },
+  profileStat: { alignItems: "center", gap: 2 },
   profileStatValue: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 22,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   profileStatLabel: {
-    color: 'rgba(255,255,255,0.6)',
+    color: "rgba(255,255,255,0.6)",
     fontSize: 11,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   profileStatDivider: {
     width: 1,
-    backgroundColor: 'rgba(255,255,255,0.15)',
+    backgroundColor: "rgba(255,255,255,0.15)",
   },
   section: { gap: Spacing.sm },
   sectionTitle: {

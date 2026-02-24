@@ -16,7 +16,9 @@ export default function RecordStackNavigator() {
   const { theme, isDark } = useTheme();
 
   return (
-    <Stack.Navigator screenOptions={{ ...getCommonScreenOptions({ theme, isDark }) }}>
+    <Stack.Navigator
+      screenOptions={{ ...getCommonScreenOptions({ theme, isDark }) }}
+    >
       <Stack.Screen
         name="Record"
         component={RecordScreen}

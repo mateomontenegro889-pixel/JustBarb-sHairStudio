@@ -27,26 +27,26 @@ export function RecordButton({ isRecording, onPress }: RecordButtonProps) {
       scale.value = withRepeat(
         withSequence(
           withTiming(1.05, { duration: 500 }),
-          withTiming(1, { duration: 500 })
+          withTiming(1, { duration: 500 }),
         ),
         -1,
-        false
+        false,
       );
       ringScale.value = withRepeat(
         withSequence(
           withTiming(1.4, { duration: 1000 }),
-          withTiming(1, { duration: 1000 })
+          withTiming(1, { duration: 1000 }),
         ),
         -1,
-        false
+        false,
       );
       ringOpacity.value = withRepeat(
         withSequence(
           withTiming(0, { duration: 1000 }),
-          withTiming(0.3, { duration: 1000 })
+          withTiming(0.3, { duration: 1000 }),
         ),
         -1,
-        false
+        false,
       );
     } else {
       scale.value = withSpring(1);
@@ -72,11 +72,7 @@ export function RecordButton({ isRecording, onPress }: RecordButtonProps) {
     <View style={styles.container}>
       {isRecording ? (
         <Animated.View
-          style={[
-            styles.ring,
-            { borderColor: theme.recording },
-            ringStyle,
-          ]}
+          style={[styles.ring, { borderColor: theme.recording }, ringStyle]}
         />
       ) : null}
       <Pressable
@@ -89,7 +85,7 @@ export function RecordButton({ isRecording, onPress }: RecordButtonProps) {
           {
             backgroundColor: isRecording ? theme.recording : theme.primary,
             opacity: pressed ? 0.9 : 1,
-            cursor: Platform.OS === 'web' ? 'pointer' : undefined,
+            cursor: Platform.OS === "web" ? "pointer" : undefined,
             ...Platform.select({
               ios: {
                 shadowColor: isRecording ? theme.recording : theme.primary,
@@ -101,7 +97,7 @@ export function RecordButton({ isRecording, onPress }: RecordButtonProps) {
                 elevation: 8,
               },
               web: {
-                boxShadow: isRecording 
+                boxShadow: isRecording
                   ? `0 8px 24px ${theme.recording}66`
                   : `0 8px 24px ${theme.primary}66`,
               },

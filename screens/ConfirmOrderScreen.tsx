@@ -1,5 +1,12 @@
 import React, { useState, useLayoutEffect } from "react";
-import { View, StyleSheet, TextInput, Pressable, ScrollView, Platform } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TextInput,
+  Pressable,
+  ScrollView,
+  Platform,
+} from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
@@ -30,7 +37,7 @@ export default function ConfirmOrderScreen() {
   const staffName = "Chef";
 
   const deduplicateMeals = (text: string): string => {
-    const lines = text.split("\n").filter(line => line.trim());
+    const lines = text.split("\n").filter((line) => line.trim());
     const uniqueLines = [...new Set(lines)];
     return uniqueLines.join("\n");
   };
@@ -42,10 +49,12 @@ export default function ConfirmOrderScreen() {
           onPress={handleCancel}
           style={({ pressed }) => [
             { opacity: pressed ? 0.6 : 1 },
-            Platform.OS === 'web' ? { cursor: 'pointer' } : {},
+            Platform.OS === "web" ? { cursor: "pointer" } : {},
           ]}
         >
-          <ThemedText type="body" style={{ color: theme.textSecondary }}>Cancel</ThemedText>
+          <ThemedText type="body" style={{ color: theme.textSecondary }}>
+            Cancel
+          </ThemedText>
         </Pressable>
       ),
       headerRight: () => (
@@ -54,19 +63,27 @@ export default function ConfirmOrderScreen() {
           disabled={!orderText.trim()}
           style={({ pressed }) => [
             styles.confirmButton,
-            { 
-              backgroundColor: orderText.trim() ? theme.primary : theme.backgroundSecondary,
+            {
+              backgroundColor: orderText.trim()
+                ? theme.primary
+                : theme.backgroundSecondary,
               opacity: pressed ? 0.8 : 1,
             },
-            Platform.OS === 'web' ? { cursor: 'pointer' } : {},
+            Platform.OS === "web" ? { cursor: "pointer" } : {},
           ]}
         >
-          <Feather name="check" size={14} color={orderText.trim() ? theme.buttonText : theme.textTertiary} />
-          <ThemedText style={{
-            color: orderText.trim() ? theme.buttonText : theme.textTertiary,
-            fontWeight: "600",
-            fontSize: 14,
-          }}>
+          <Feather
+            name="check"
+            size={14}
+            color={orderText.trim() ? theme.buttonText : theme.textTertiary}
+          />
+          <ThemedText
+            style={{
+              color: orderText.trim() ? theme.buttonText : theme.textTertiary,
+              fontWeight: "600",
+              fontSize: 14,
+            }}
+          >
             Save
           </ThemedText>
         </Pressable>
@@ -82,7 +99,9 @@ export default function ConfirmOrderScreen() {
   };
 
   const handleConfirm = async () => {
-    const itemLines = orderText.split('\n').filter(l => l.trim().startsWith('-')).length;
+    const itemLines = orderText
+      .split("\n")
+      .filter((l) => l.trim().startsWith("-")).length;
     const newOrder: Order = {
       id: Date.now().toString(),
       audioUri,
@@ -92,7 +111,7 @@ export default function ConfirmOrderScreen() {
       duration: "0:15",
       tableNumber,
       guestCount,
-      status: 'new',
+      status: "new",
       totalItems: itemLines,
     };
 
@@ -108,7 +127,9 @@ export default function ConfirmOrderScreen() {
     <ScreenKeyboardAwareScrollView contentContainerStyle={styles.container}>
       <Card style={styles.headerCard}>
         <View style={styles.headerCardContent}>
-          <View style={[styles.headerIcon, { backgroundColor: theme.primarySoft }]}>
+          <View
+            style={[styles.headerIcon, { backgroundColor: theme.primarySoft }]}
+          >
             <Feather name="clipboard" size={22} color={theme.primary} />
           </View>
           <View style={styles.headerText}>
@@ -121,7 +142,10 @@ export default function ConfirmOrderScreen() {
       </Card>
 
       <View style={styles.section}>
-        <ThemedText type="caption" style={[styles.sectionTitle, { color: theme.textTertiary }]}>
+        <ThemedText
+          type="caption"
+          style={[styles.sectionTitle, { color: theme.textTertiary }]}
+        >
           TABLE NUMBER
         </ThemedText>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -133,18 +157,24 @@ export default function ConfirmOrderScreen() {
                 style={({ pressed }) => [
                   styles.selectionButton,
                   {
-                    backgroundColor: tableNumber === num ? theme.primary : theme.backgroundDefault,
-                    borderColor: tableNumber === num ? theme.primary : theme.border,
+                    backgroundColor:
+                      tableNumber === num
+                        ? theme.primary
+                        : theme.backgroundDefault,
+                    borderColor:
+                      tableNumber === num ? theme.primary : theme.border,
                     opacity: pressed ? 0.8 : 1,
                   },
-                  Platform.OS === 'web' ? { cursor: 'pointer' } : {},
+                  Platform.OS === "web" ? { cursor: "pointer" } : {},
                 ]}
               >
-                <ThemedText style={{
-                  color: tableNumber === num ? theme.buttonText : theme.text,
-                  fontWeight: tableNumber === num ? "700" : "500",
-                  fontSize: 16,
-                }}>
+                <ThemedText
+                  style={{
+                    color: tableNumber === num ? theme.buttonText : theme.text,
+                    fontWeight: tableNumber === num ? "700" : "500",
+                    fontSize: 16,
+                  }}
+                >
                   {num}
                 </ThemedText>
               </Pressable>
@@ -154,7 +184,10 @@ export default function ConfirmOrderScreen() {
       </View>
 
       <View style={styles.section}>
-        <ThemedText type="caption" style={[styles.sectionTitle, { color: theme.textTertiary }]}>
+        <ThemedText
+          type="caption"
+          style={[styles.sectionTitle, { color: theme.textTertiary }]}
+        >
           NUMBER OF GUESTS
         </ThemedText>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -166,20 +199,34 @@ export default function ConfirmOrderScreen() {
                 style={({ pressed }) => [
                   styles.selectionButton,
                   {
-                    backgroundColor: guestCount === num ? theme.primary : theme.backgroundDefault,
-                    borderColor: guestCount === num ? theme.primary : theme.border,
+                    backgroundColor:
+                      guestCount === num
+                        ? theme.primary
+                        : theme.backgroundDefault,
+                    borderColor:
+                      guestCount === num ? theme.primary : theme.border,
                     opacity: pressed ? 0.8 : 1,
                   },
-                  Platform.OS === 'web' ? { cursor: 'pointer' } : {},
+                  Platform.OS === "web" ? { cursor: "pointer" } : {},
                 ]}
               >
                 <View style={styles.guestButtonContent}>
-                  <Feather name="users" size={11} color={guestCount === num ? theme.buttonText : theme.textSecondary} />
-                  <ThemedText style={{
-                    color: guestCount === num ? theme.buttonText : theme.text,
-                    fontWeight: guestCount === num ? "700" : "500",
-                    fontSize: 14,
-                  }}>
+                  <Feather
+                    name="users"
+                    size={11}
+                    color={
+                      guestCount === num
+                        ? theme.buttonText
+                        : theme.textSecondary
+                    }
+                  />
+                  <ThemedText
+                    style={{
+                      color: guestCount === num ? theme.buttonText : theme.text,
+                      fontWeight: guestCount === num ? "700" : "500",
+                      fontSize: 14,
+                    }}
+                  >
                     {num}
                   </ThemedText>
                 </View>
@@ -190,14 +237,20 @@ export default function ConfirmOrderScreen() {
       </View>
 
       <View style={styles.section}>
-        <ThemedText type="caption" style={[styles.sectionTitle, { color: theme.textTertiary }]}>
+        <ThemedText
+          type="caption"
+          style={[styles.sectionTitle, { color: theme.textTertiary }]}
+        >
           AUDIO RECORDING
         </ThemedText>
         <AudioPlayer audioUri={audioUri} duration="0:15" />
       </View>
 
       <View style={styles.section}>
-        <ThemedText type="caption" style={[styles.sectionTitle, { color: theme.textTertiary }]}>
+        <ThemedText
+          type="caption"
+          style={[styles.sectionTitle, { color: theme.textTertiary }]}
+        >
           ORDER ITEMS
         </ThemedText>
         <Card style={styles.textInputCard}>
@@ -277,8 +330,8 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   confirmButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 6,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,

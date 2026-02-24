@@ -11,7 +11,13 @@ import { Spacing, BorderRadius } from "@/constants/theme";
 import { orderStore } from "@/utils/orderStore";
 import { Order, ORDER_STATUS_CONFIG } from "@/types/order";
 
-function StatCard({ icon, label, value, color, bgColor }: {
+function StatCard({
+  icon,
+  label,
+  value,
+  color,
+  bgColor,
+}: {
   icon: string;
   label: string;
   value: string | number;
@@ -21,47 +27,68 @@ function StatCard({ icon, label, value, color, bgColor }: {
   const { theme } = useTheme();
   return (
     <Card style={styles.statCard}>
-      <View style={[styles.statIcon, { backgroundColor: bgColor }]}>  
+      <View style={[styles.statIcon, { backgroundColor: bgColor }]}>
         <Feather name={icon as any} size={18} color={color} />
       </View>
-      <ThemedText style={[styles.statValue, { color: theme.text }]}>{value}</ThemedText>
-      <ThemedText type="caption" style={{ color: theme.textSecondary }}>{label}</ThemedText>
+      <ThemedText style={[styles.statValue, { color: theme.text }]}>
+        {value}
+      </ThemedText>
+      <ThemedText type="caption" style={{ color: theme.textSecondary }}>
+        {label}
+      </ThemedText>
     </Card>
   );
 }
 
-function TableCell({ number, isActive, order, onPress }: {
+function TableCell({
+  number,
+  isActive,
+  order,
+  onPress,
+}: {
   number: number;
   isActive: boolean;
   order?: Order;
   onPress: () => void;
 }) {
   const { theme } = useTheme();
-  const status = order?.status || '';
-  const config = ORDER_STATUS_CONFIG[status] || ORDER_STATUS_CONFIG['new'];
-  
+  const status = order?.status || "";
+  const config = ORDER_STATUS_CONFIG[status] || ORDER_STATUS_CONFIG["new"];
+
   return (
     <Pressable
       onPress={onPress}
       style={({ pressed }) => [
         styles.tableCell,
         {
-          backgroundColor: isActive ? config.bgColor : theme.backgroundSecondary,
-          borderColor: isActive ? config.color : 'transparent',
+          backgroundColor: isActive
+            ? config.bgColor
+            : theme.backgroundSecondary,
+          borderColor: isActive ? config.color : "transparent",
           borderWidth: isActive ? 1.5 : 0,
           opacity: pressed ? 0.8 : 1,
         },
-        Platform.OS === 'web' ? { cursor: 'pointer' } : {},
+        Platform.OS === "web" ? { cursor: "pointer" } : {},
       ]}
     >
-      <ThemedText style={[styles.tableNum, { color: isActive ? config.color : theme.textTertiary }]}>
+      <ThemedText
+        style={[
+          styles.tableNum,
+          { color: isActive ? config.color : theme.textTertiary },
+        ]}
+      >
         {number}
       </ThemedText>
       {isActive ? (
         <View style={[styles.tableDot, { backgroundColor: config.color }]} />
       ) : null}
       {order?.guestCount ? (
-        <ThemedText style={[styles.tableGuests, { color: isActive ? config.color : theme.textTertiary }]}>
+        <ThemedText
+          style={[
+            styles.tableGuests,
+            { color: isActive ? config.color : theme.textTertiary },
+          ]}
+        >
           {order.guestCount}
         </ThemedText>
       ) : null}
@@ -82,7 +109,9 @@ export default function DashboardScreen() {
     avgOrdersPerHour: 0,
   });
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
-  const [activeOrdersByTable, setActiveOrdersByTable] = useState<Map<number, Order>>(new Map());
+  const [activeOrdersByTable, setActiveOrdersByTable] = useState<
+    Map<number, Order>
+  >(new Map());
 
   const loadData = useCallback(async () => {
     const [statsData, allOrders] = await Promise.all([
@@ -91,10 +120,14 @@ export default function DashboardScreen() {
     ]);
     setStats(statsData);
     setRecentOrders(allOrders.slice(0, 5));
-    
+
     const tableMap = new Map<number, Order>();
-    allOrders.forEach(order => {
-      if (order.tableNumber && order.status !== 'completed' && order.status !== 'closed') {
+    allOrders.forEach((order) => {
+      if (
+        order.tableNumber &&
+        order.status !== "completed" &&
+        order.status !== "closed"
+      ) {
         if (!tableMap.has(order.tableNumber)) {
           tableMap.set(order.tableNumber, order);
         }
@@ -103,7 +136,11 @@ export default function DashboardScreen() {
     setActiveOrdersByTable(tableMap);
   }, []);
 
-  useFocusEffect(useCallback(() => { loadData(); }, [loadData]));
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, [loadData]),
+  );
 
   const getTimeGreeting = () => {
     const hour = new Date().getHours();
@@ -136,8 +173,8 @@ export default function DashboardScreen() {
           <ThemedText style={styles.greeting}>{getTimeGreeting()}</ThemedText>
           <ThemedText style={styles.heroTitle}>
             {stats.activeOrders > 0
-              ? `${stats.activeOrders} Active Order${stats.activeOrders !== 1 ? 's' : ''}`
-              : 'No Active Orders'}
+              ? `${stats.activeOrders} Active Order${stats.activeOrders !== 1 ? "s" : ""}`
+              : "No Active Orders"}
           </ThemedText>
           <ThemedText style={styles.heroSubtitle}>
             {stats.todayOrders} orders today | {stats.totalGuests} guests served
@@ -146,22 +183,48 @@ export default function DashboardScreen() {
       </LinearGradient>
 
       <View style={styles.statsGrid}>
-        <StatCard icon="clipboard" label="Today" value={stats.todayOrders} color="#6D28D9" bgColor="#EDE9FE" />
-        <StatCard icon="activity" label="Active" value={stats.activeOrders} color="#D97706" bgColor="#FEF3C7" />
-        <StatCard icon="check-circle" label="Done" value={stats.completedOrders} color="#059669" bgColor="#D1FAE5" />
-        <StatCard icon="users" label="Guests" value={stats.totalGuests} color="#0284C7" bgColor="#E0F2FE" />
+        <StatCard
+          icon="clipboard"
+          label="Today"
+          value={stats.todayOrders}
+          color="#6D28D9"
+          bgColor="#EDE9FE"
+        />
+        <StatCard
+          icon="activity"
+          label="Active"
+          value={stats.activeOrders}
+          color="#D97706"
+          bgColor="#FEF3C7"
+        />
+        <StatCard
+          icon="check-circle"
+          label="Done"
+          value={stats.completedOrders}
+          color="#059669"
+          bgColor="#D1FAE5"
+        />
+        <StatCard
+          icon="users"
+          label="Guests"
+          value={stats.totalGuests}
+          color="#0284C7"
+          bgColor="#E0F2FE"
+        />
       </View>
 
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <ThemedText type="title" style={{ color: theme.text }}>Table Overview</ThemedText>
+          <ThemedText type="title" style={{ color: theme.text }}>
+            Table Overview
+          </ThemedText>
           <ThemedText type="caption" style={{ color: theme.textSecondary }}>
             {stats.activeTables.length}/12 active
           </ThemedText>
         </View>
         <Card style={styles.tableGrid}>
           <View style={styles.tableGridInner}>
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(num => (
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => (
               <TableCell
                 key={num}
                 number={num}
@@ -170,8 +233,8 @@ export default function DashboardScreen() {
                 onPress={() => {
                   const order = activeOrdersByTable.get(num);
                   if (order) {
-                    navigation.getParent()?.navigate('HistoryTab', {
-                      screen: 'OrderDetail',
+                    navigation.getParent()?.navigate("HistoryTab", {
+                      screen: "OrderDetail",
                       params: { orderId: order.id },
                     });
                   }
@@ -185,25 +248,37 @@ export default function DashboardScreen() {
       {recentOrders.length > 0 ? (
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <ThemedText type="title" style={{ color: theme.text }}>Recent Activity</ThemedText>
+            <ThemedText type="title" style={{ color: theme.text }}>
+              Recent Activity
+            </ThemedText>
             <Pressable
-              onPress={() => navigation.getParent()?.navigate('HistoryTab')}
+              onPress={() => navigation.getParent()?.navigate("HistoryTab")}
               style={({ pressed }) => [
                 { opacity: pressed ? 0.6 : 1 },
-                Platform.OS === 'web' ? { cursor: 'pointer' } : {},
+                Platform.OS === "web" ? { cursor: "pointer" } : {},
               ]}
             >
-              <ThemedText style={{ color: theme.primary, fontWeight: '600', fontSize: 14 }}>View All</ThemedText>
+              <ThemedText
+                style={{
+                  color: theme.primary,
+                  fontWeight: "600",
+                  fontSize: 14,
+                }}
+              >
+                View All
+              </ThemedText>
             </Pressable>
           </View>
           {recentOrders.map((order, index) => {
-            const statusConfig = ORDER_STATUS_CONFIG[order.status || 'new'] || ORDER_STATUS_CONFIG['new'];
+            const statusConfig =
+              ORDER_STATUS_CONFIG[order.status || "new"] ||
+              ORDER_STATUS_CONFIG["new"];
             return (
               <Pressable
                 key={order.id}
                 onPress={() => {
-                  navigation.getParent()?.navigate('HistoryTab', {
-                    screen: 'OrderDetail',
+                  navigation.getParent()?.navigate("HistoryTab", {
+                    screen: "OrderDetail",
                     params: { orderId: order.id },
                   });
                 }}
@@ -215,30 +290,58 @@ export default function DashboardScreen() {
                     borderBottomWidth: index < recentOrders.length - 1 ? 1 : 0,
                     borderBottomColor: theme.borderLight,
                   },
-                  Platform.OS === 'web' ? { cursor: 'pointer' } : {},
+                  Platform.OS === "web" ? { cursor: "pointer" } : {},
                 ]}
               >
-                <View style={[styles.activityDot, { backgroundColor: statusConfig.color }]} />
+                <View
+                  style={[
+                    styles.activityDot,
+                    { backgroundColor: statusConfig.color },
+                  ]}
+                />
                 <View style={styles.activityContent}>
                   <View style={styles.activityRow}>
                     <ThemedText style={styles.activityTitle} numberOfLines={1}>
-                      {order.tableNumber ? `Table ${order.tableNumber}` : 'No table'}
-                      {order.guestCount ? ` - ${order.guestCount} guests` : ''}
+                      {order.tableNumber
+                        ? `Table ${order.tableNumber}`
+                        : "No table"}
+                      {order.guestCount ? ` - ${order.guestCount} guests` : ""}
                     </ThemedText>
-                    <View style={[styles.activityBadge, { backgroundColor: statusConfig.bgColor }]}>
-                      <ThemedText style={[styles.activityBadgeText, { color: statusConfig.color }]}>
+                    <View
+                      style={[
+                        styles.activityBadge,
+                        { backgroundColor: statusConfig.bgColor },
+                      ]}
+                    >
+                      <ThemedText
+                        style={[
+                          styles.activityBadgeText,
+                          { color: statusConfig.color },
+                        ]}
+                      >
                         {statusConfig.label}
                       </ThemedText>
                     </View>
                   </View>
-                  <ThemedText type="caption" numberOfLines={1} style={{ color: theme.textSecondary }}>
+                  <ThemedText
+                    type="caption"
+                    numberOfLines={1}
+                    style={{ color: theme.textSecondary }}
+                  >
                     {order.transcribedText}
                   </ThemedText>
-                  <ThemedText type="caption" style={{ color: theme.textTertiary }}>
+                  <ThemedText
+                    type="caption"
+                    style={{ color: theme.textTertiary }}
+                  >
                     {formatTime(order.timestamp)} | {order.staffName}
                   </ThemedText>
                 </View>
-                <Feather name="chevron-right" size={16} color={theme.textTertiary} />
+                <Feather
+                  name="chevron-right"
+                  size={16}
+                  color={theme.textTertiary}
+                />
               </Pressable>
             );
           })}
@@ -247,23 +350,34 @@ export default function DashboardScreen() {
 
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <ThemedText type="title" style={{ color: theme.text }}>Quick Stats</ThemedText>
+          <ThemedText type="title" style={{ color: theme.text }}>
+            Quick Stats
+          </ThemedText>
         </View>
         <Card style={styles.quickStatsCard}>
           <View style={styles.quickStatRow}>
             <View style={styles.quickStatItem}>
               <Feather name="trending-up" size={16} color={theme.primary} />
-              <ThemedText type="caption" style={{ color: theme.textSecondary }}>Avg/Hour</ThemedText>
+              <ThemedText type="caption" style={{ color: theme.textSecondary }}>
+                Avg/Hour
+              </ThemedText>
             </View>
             <ThemedText style={[styles.quickStatValue, { color: theme.text }]}>
               {stats.avgOrdersPerHour}
             </ThemedText>
           </View>
-          <View style={[styles.quickStatDivider, { backgroundColor: theme.borderLight }]} />
+          <View
+            style={[
+              styles.quickStatDivider,
+              { backgroundColor: theme.borderLight },
+            ]}
+          />
           <View style={styles.quickStatRow}>
             <View style={styles.quickStatItem}>
               <Feather name="database" size={16} color={theme.primary} />
-              <ThemedText type="caption" style={{ color: theme.textSecondary }}>All Time</ThemedText>
+              <ThemedText type="caption" style={{ color: theme.textSecondary }}>
+                All Time
+              </ThemedText>
             </View>
             <ThemedText style={[styles.quickStatValue, { color: theme.text }]}>
               {stats.totalOrders}
@@ -283,80 +397,80 @@ const styles = StyleSheet.create({
   heroCard: {
     borderRadius: BorderRadius.xl,
     padding: Spacing["2xl"],
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   heroContent: {
     gap: Spacing.sm,
   },
   greeting: {
-    color: 'rgba(255,255,255,0.8)',
+    color: "rgba(255,255,255,0.8)",
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   heroTitle: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 28,
-    fontWeight: '700',
+    fontWeight: "700",
     letterSpacing: -0.3,
   },
   heroSubtitle: {
-    color: 'rgba(255,255,255,0.7)',
+    color: "rgba(255,255,255,0.7)",
     fontSize: 14,
-    fontWeight: '400',
+    fontWeight: "400",
     marginTop: Spacing.xs,
   },
   statsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: Spacing.md,
   },
   statCard: {
     flex: 1,
-    minWidth: '45%',
+    minWidth: "45%",
     padding: Spacing.lg,
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
     gap: Spacing.sm,
   },
   statIcon: {
     width: 36,
     height: 36,
     borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   statValue: {
     fontSize: 28,
-    fontWeight: '700',
+    fontWeight: "700",
     letterSpacing: -0.5,
   },
   section: {
     gap: Spacing.md,
   },
   sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   tableGrid: {
     padding: Spacing.lg,
   },
   tableGridInner: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: Spacing.sm,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   tableCell: {
     width: 68,
     height: 68,
     borderRadius: BorderRadius.md,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     gap: 2,
   },
   tableNum: {
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   tableDot: {
     width: 6,
@@ -365,11 +479,11 @@ const styles = StyleSheet.create({
   },
   tableGuests: {
     fontSize: 10,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   activityItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: Spacing.lg,
     borderRadius: BorderRadius.md,
     gap: Spacing.md,
@@ -384,13 +498,13 @@ const styles = StyleSheet.create({
     gap: 3,
   },
   activityRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   activityTitle: {
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: "600",
     flex: 1,
   },
   activityBadge: {
@@ -401,25 +515,25 @@ const styles = StyleSheet.create({
   },
   activityBadgeText: {
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   quickStatsCard: {
     padding: Spacing.lg,
   },
   quickStatRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingVertical: Spacing.sm,
   },
   quickStatItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.sm,
   },
   quickStatValue: {
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   quickStatDivider: {
     height: 1,

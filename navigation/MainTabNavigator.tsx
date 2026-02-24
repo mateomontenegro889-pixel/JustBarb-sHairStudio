@@ -55,7 +55,7 @@ export default function MainTabNavigator() {
         headerShown: false,
         tabBarLabelStyle: {
           fontSize: 11,
-          fontWeight: '600',
+          fontWeight: "600",
         },
       }}
     >
@@ -108,14 +108,14 @@ export default function MainTabNavigator() {
 
 const styles = StyleSheet.create({
   recordTabIcon: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   recordDot: {
     width: 4,
     height: 4,
     borderRadius: 2,
-    position: 'absolute',
+    position: "absolute",
     top: -2,
   },
 });

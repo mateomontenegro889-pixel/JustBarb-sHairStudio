@@ -23,7 +23,7 @@ export default function ConfirmAddItemsScreen() {
   const [orderText, setOrderText] = useState(transcribedText);
 
   const deduplicateMeals = (text: string): string => {
-    const lines = text.split("\n").filter(line => line.trim());
+    const lines = text.split("\n").filter((line) => line.trim());
     const uniqueLines = [...new Set(lines)];
     return uniqueLines.join("\n");
   };
@@ -59,23 +59,22 @@ export default function ConfirmAddItemsScreen() {
   }, [navigation, orderText, theme]);
 
   const handleCancel = () => {
-    showAlert(
-      "Cancel",
-      "Are you sure you want to cancel adding these items?",
-      [
-        { text: "No", style: "cancel" },
-        {
-          text: "Yes",
-          style: "destructive",
-          onPress: () => navigation.goBack(),
-        },
-      ]
-    );
+    showAlert("Cancel", "Are you sure you want to cancel adding these items?", [
+      { text: "No", style: "cancel" },
+      {
+        text: "Yes",
+        style: "destructive",
+        onPress: () => navigation.goBack(),
+      },
+    ]);
   };
 
   const handleConfirm = async () => {
     try {
-      await orderStore.appendItems(existingOrderId, deduplicateMeals(orderText));
+      await orderStore.appendItems(
+        existingOrderId,
+        deduplicateMeals(orderText),
+      );
       navigation.navigate("OrderDetail", { orderId: existingOrderId });
     } catch (error) {
       showError("Error", "Failed to add items. Please try again.");
