@@ -1,13 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
-import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
+import {
+  useNavigation,
+  useRoute,
+  useFocusEffect,
+} from "@react-navigation/native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { RecordButton } from "@/components/RecordButton";
 import { useScreenInsets } from "@/hooks/useScreenInsets";
 import { Spacing } from "@/constants/theme";
-import { startRecording, stopRecording, requestAudioPermissions } from "@/utils/audioRecording";
-import { transcribeAudio, extractMealAndDrinkOrders } from "@/utils/transcription";
+import {
+  startRecording,
+  stopRecording,
+  requestAudioPermissions,
+} from "@/utils/audioRecording";
+import {
+  transcribeAudio,
+  extractMealAndDrinkOrders,
+} from "@/utils/transcription";
 import { getApiKey } from "@/utils/apiKeyStorage";
 import { impactAsync, ImpactFeedbackStyle } from "@/utils/haptics";
 import { showError } from "@/utils/webAlert";
@@ -17,7 +28,7 @@ export default function RecordMoreScreen() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const { existingOrderId } = route.params as { existingOrderId: string };
-  
+
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -26,7 +37,7 @@ export default function RecordMoreScreen() {
   useFocusEffect(
     React.useCallback(() => {
       checkApiKey();
-    }, [])
+    }, []),
   );
 
   const checkApiKey = async () => {
@@ -38,7 +49,7 @@ export default function RecordMoreScreen() {
     let interval: NodeJS.Timeout;
     if (isRecording) {
       interval = setInterval(() => {
-        setRecordingTime(prev => prev + 1);
+        setRecordingTime((prev) => prev + 1);
       }, 1000);
     }
     return () => {
@@ -58,7 +69,7 @@ export default function RecordMoreScreen() {
     if (!hasApiKey && !isRecording) {
       showError(
         "API Key Required",
-        "Please add your OpenAI API key in the Profile tab to use transcription."
+        "Please add your OpenAI API key in the Profile tab to use transcription.",
       );
       return;
     }
@@ -69,7 +80,7 @@ export default function RecordMoreScreen() {
 
       try {
         const audioUri = await stopRecording();
-        
+
         if (!audioUri) {
           throw new Error("Failed to save recording");
         }
@@ -80,7 +91,10 @@ export default function RecordMoreScreen() {
         }
 
         const transcribedText = await transcribeAudio(audioUri, apiKey);
-        const cleanedText = await extractMealAndDrinkOrders(transcribedText, apiKey);
+        const cleanedText = await extractMealAndDrinkOrders(
+          transcribedText,
+          apiKey,
+        );
 
         setIsProcessing(false);
         setRecordingTime(0);
@@ -93,8 +107,9 @@ export default function RecordMoreScreen() {
       } catch (error: any) {
         setIsProcessing(false);
         setRecordingTime(0);
-        
-        const errorMessage = error.message || "Failed to transcribe audio. Please try again.";
+
+        const errorMessage =
+          error.message || "Failed to transcribe audio. Please try again.";
         showError("Transcription Error", errorMessage);
       }
     } else {
@@ -103,7 +118,7 @@ export default function RecordMoreScreen() {
         if (!hasPermission) {
           showError(
             "Permission Required",
-            "Please allow microphone access to record audio."
+            "Please allow microphone access to record audio.",
           );
           return;
         }
@@ -112,7 +127,10 @@ export default function RecordMoreScreen() {
         setIsRecording(true);
         setRecordingTime(0);
       } catch (error: any) {
-        showError("Recording Error", error.message || "Failed to start recording");
+        showError(
+          "Recording Error",
+          error.message || "Failed to start recording",
+        );
       }
     }
   };
@@ -144,10 +162,7 @@ export default function RecordMoreScreen() {
           </ThemedText>
         ) : null}
 
-        <RecordButton
-          isRecording={isRecording}
-          onPress={handleRecordPress}
-        />
+        <RecordButton isRecording={isRecording} onPress={handleRecordPress} />
 
         <View style={styles.waveformContainer}>
           {isRecording ? (

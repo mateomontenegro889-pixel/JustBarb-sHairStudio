@@ -9,8 +9,15 @@ import { Card } from "@/components/Card";
 import { useScreenInsets } from "@/hooks/useScreenInsets";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
-import { startRecording, stopRecording, requestAudioPermissions } from "@/utils/audioRecording";
-import { transcribeAudio, extractMealAndDrinkOrders } from "@/utils/transcription";
+import {
+  startRecording,
+  stopRecording,
+  requestAudioPermissions,
+} from "@/utils/audioRecording";
+import {
+  transcribeAudio,
+  extractMealAndDrinkOrders,
+} from "@/utils/transcription";
 import { getApiKey } from "@/utils/apiKeyStorage";
 import { impactAsync, ImpactFeedbackStyle } from "@/utils/haptics";
 import { showError } from "@/utils/webAlert";
@@ -32,7 +39,7 @@ export default function RecordScreen() {
   const [recordingTime, setRecordingTime] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [hasApiKey, setHasApiKey] = useState(false);
-  const [processingStep, setProcessingStep] = useState('');
+  const [processingStep, setProcessingStep] = useState("");
 
   const pulseOpacity = useSharedValue(0.3);
 
@@ -41,10 +48,10 @@ export default function RecordScreen() {
       pulseOpacity.value = withRepeat(
         withSequence(
           withTiming(0.6, { duration: 800 }),
-          withTiming(0.2, { duration: 800 })
+          withTiming(0.2, { duration: 800 }),
         ),
         -1,
-        false
+        false,
       );
     } else {
       pulseOpacity.value = withTiming(0.3);
@@ -58,7 +65,7 @@ export default function RecordScreen() {
   useFocusEffect(
     React.useCallback(() => {
       checkApiKey();
-    }, [])
+    }, []),
   );
 
   const checkApiKey = async () => {
@@ -70,7 +77,7 @@ export default function RecordScreen() {
     let interval: NodeJS.Timeout;
     if (isRecording) {
       interval = setInterval(() => {
-        setRecordingTime(prev => prev + 1);
+        setRecordingTime((prev) => prev + 1);
       }, 1000);
     }
     return () => {
@@ -90,7 +97,7 @@ export default function RecordScreen() {
     if (!hasApiKey && !isRecording) {
       showError(
         "API Key Required",
-        "Please add your OpenAI API key in the Profile tab to use transcription."
+        "Please add your OpenAI API key in the Profile tab to use transcription.",
       );
       return;
     }
@@ -98,7 +105,7 @@ export default function RecordScreen() {
     if (isRecording) {
       setIsRecording(false);
       setIsProcessing(true);
-      setProcessingStep('Saving recording...');
+      setProcessingStep("Saving recording...");
 
       try {
         const audioUri = await stopRecording();
@@ -107,15 +114,18 @@ export default function RecordScreen() {
         const apiKey = await getApiKey();
         if (!apiKey) throw new Error("API key not found");
 
-        setProcessingStep('Transcribing audio...');
+        setProcessingStep("Transcribing audio...");
         const transcribedText = await transcribeAudio(audioUri, apiKey);
-        
-        setProcessingStep('Extracting order items...');
-        const cleanedText = await extractMealAndDrinkOrders(transcribedText, apiKey);
+
+        setProcessingStep("Extracting order items...");
+        const cleanedText = await extractMealAndDrinkOrders(
+          transcribedText,
+          apiKey,
+        );
 
         setIsProcessing(false);
         setRecordingTime(0);
-        setProcessingStep('');
+        setProcessingStep("");
 
         navigation.navigate("ConfirmOrder", {
           audioUri,
@@ -124,21 +134,30 @@ export default function RecordScreen() {
       } catch (error: any) {
         setIsProcessing(false);
         setRecordingTime(0);
-        setProcessingStep('');
-        showError("Transcription Error", error.message || "Failed to transcribe audio. Please try again.");
+        setProcessingStep("");
+        showError(
+          "Transcription Error",
+          error.message || "Failed to transcribe audio. Please try again.",
+        );
       }
     } else {
       try {
         const hasPermission = await requestAudioPermissions();
         if (!hasPermission) {
-          showError("Permission Required", "Please allow microphone access to record audio.");
+          showError(
+            "Permission Required",
+            "Please allow microphone access to record audio.",
+          );
           return;
         }
         await startRecording();
         setIsRecording(true);
         setRecordingTime(0);
       } catch (error: any) {
-        showError("Recording Error", error.message || "Failed to start recording");
+        showError(
+          "Recording Error",
+          error.message || "Failed to start recording",
+        );
       }
     }
   };
@@ -149,16 +168,27 @@ export default function RecordScreen() {
         {isProcessing ? (
           <View style={styles.processingContainer}>
             <LinearGradient
-              colors={[theme.gradientStart + '15', theme.gradientEnd + '15']}
+              colors={[theme.gradientStart + "15", theme.gradientEnd + "15"]}
               style={styles.processingGlow}
             />
-            <View style={[styles.processingIcon, { backgroundColor: theme.primarySoft }]}>
+            <View
+              style={[
+                styles.processingIcon,
+                { backgroundColor: theme.primarySoft },
+              ]}
+            >
               <ActivityIndicator size="large" color={theme.primary} />
             </View>
-            <ThemedText type="title" style={[styles.processingTitle, { color: theme.text }]}>
+            <ThemedText
+              type="title"
+              style={[styles.processingTitle, { color: theme.text }]}
+            >
               Processing Order
             </ThemedText>
-            <ThemedText type="caption" style={{ color: theme.textSecondary, textAlign: 'center' }}>
+            <ThemedText
+              type="caption"
+              style={{ color: theme.textSecondary, textAlign: "center" }}
+            >
               {processingStep}
             </ThemedText>
           </View>
@@ -166,17 +196,27 @@ export default function RecordScreen() {
           <>
             <View style={styles.headerSection}>
               <ThemedText style={[styles.title, { color: theme.text }]}>
-                {isRecording ? 'Recording...' : 'New Order'}
+                {isRecording ? "Recording..." : "New Order"}
               </ThemedText>
-              <ThemedText type="caption" style={{ color: theme.textSecondary, textAlign: 'center' }}>
-                {isRecording ? 'Speak clearly into the microphone' : 'Tap the button to start recording an order'}
+              <ThemedText
+                type="caption"
+                style={{ color: theme.textSecondary, textAlign: "center" }}
+              >
+                {isRecording
+                  ? "Speak clearly into the microphone"
+                  : "Tap the button to start recording an order"}
               </ThemedText>
             </View>
 
             {isRecording ? (
               <Card style={styles.timerCard}>
                 <View style={styles.timerContent}>
-                  <View style={[styles.recordingDot, { backgroundColor: theme.recording }]} />
+                  <View
+                    style={[
+                      styles.recordingDot,
+                      { backgroundColor: theme.recording },
+                    ]}
+                  />
                   <ThemedText style={[styles.timer, { color: theme.primary }]}>
                     {formatTime(recordingTime)}
                   </ThemedText>
@@ -186,9 +226,18 @@ export default function RecordScreen() {
 
             <View style={styles.buttonArea}>
               {isRecording ? (
-                <Animated.View style={[styles.pulseRing, { borderColor: theme.recording }, pulseStyle]} />
+                <Animated.View
+                  style={[
+                    styles.pulseRing,
+                    { borderColor: theme.recording },
+                    pulseStyle,
+                  ]}
+                />
               ) : null}
-              <RecordButton isRecording={isRecording} onPress={handleRecordPress} />
+              <RecordButton
+                isRecording={isRecording}
+                onPress={handleRecordPress}
+              />
             </View>
 
             {isRecording ? (
@@ -212,14 +261,32 @@ export default function RecordScreen() {
             {!hasApiKey ? (
               <Card accentColor={theme.warning} style={styles.warningCard}>
                 <View style={styles.warningContent}>
-                  <View style={[styles.warningIcon, { backgroundColor: theme.warningLight }]}>
-                    <Feather name="alert-triangle" size={16} color={theme.warning} />
+                  <View
+                    style={[
+                      styles.warningIcon,
+                      { backgroundColor: theme.warningLight },
+                    ]}
+                  >
+                    <Feather
+                      name="alert-triangle"
+                      size={16}
+                      color={theme.warning}
+                    />
                   </View>
                   <View style={{ flex: 1 }}>
-                    <ThemedText style={{ color: theme.warning, fontWeight: "600", fontSize: 14 }}>
+                    <ThemedText
+                      style={{
+                        color: theme.warning,
+                        fontWeight: "600",
+                        fontSize: 14,
+                      }}
+                    >
                       API Key Required
                     </ThemedText>
-                    <ThemedText type="caption" style={{ color: theme.textSecondary }}>
+                    <ThemedText
+                      type="caption"
+                      style={{ color: theme.textSecondary }}
+                    >
                       Go to Profile tab to configure your API key
                     </ThemedText>
                   </View>
@@ -229,11 +296,20 @@ export default function RecordScreen() {
 
             {!isRecording && hasApiKey ? (
               <View style={styles.tipContainer}>
-                <View style={[styles.tipIcon, { backgroundColor: theme.primarySoft }]}>
+                <View
+                  style={[
+                    styles.tipIcon,
+                    { backgroundColor: theme.primarySoft },
+                  ]}
+                >
                   <Feather name="info" size={14} color={theme.primary} />
                 </View>
-                <ThemedText type="caption" style={{ color: theme.textSecondary, flex: 1 }}>
-                  Speak naturally - AI will extract and organize order items automatically
+                <ThemedText
+                  type="caption"
+                  style={{ color: theme.textSecondary, flex: 1 }}
+                >
+                  Speak naturally - AI will extract and organize order items
+                  automatically
                 </ThemedText>
               </View>
             ) : null}
@@ -281,15 +357,15 @@ const styles = StyleSheet.create({
   timer: {
     fontSize: 40,
     fontWeight: "700",
-    fontVariant: ['tabular-nums'],
+    fontVariant: ["tabular-nums"],
   },
   buttonArea: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginVertical: Spacing.lg,
   },
   pulseRing: {
-    position: 'absolute',
+    position: "absolute",
     width: 180,
     height: 180,
     borderRadius: 90,
@@ -311,23 +387,23 @@ const styles = StyleSheet.create({
     marginHorizontal: Spacing.xl,
   },
   warningContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.md,
   },
   warningIcon: {
     width: 32,
     height: 32,
     borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   processingContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     gap: Spacing.xl,
   },
   processingGlow: {
-    position: 'absolute',
+    position: "absolute",
     width: 200,
     height: 200,
     borderRadius: 100,
@@ -336,16 +412,16 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   processingTitle: {
     fontSize: 24,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   tipContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.sm,
     paddingHorizontal: Spacing["2xl"],
   },
@@ -353,7 +429,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

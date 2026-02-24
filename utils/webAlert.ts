@@ -1,22 +1,22 @@
-import { Alert, Platform } from 'react-native';
+import { Alert, Platform } from "react-native";
 
 interface AlertButton {
   text: string;
-  style?: 'default' | 'cancel' | 'destructive';
+  style?: "default" | "cancel" | "destructive";
   onPress?: () => void | Promise<void>;
 }
 
 export function showAlert(
   title: string,
   message: string,
-  buttons: AlertButton[]
+  buttons: AlertButton[],
 ): void {
-  if (Platform.OS === 'web') {
-    const confirmButton = buttons.find(b => b.style !== 'cancel');
-    const cancelButton = buttons.find(b => b.style === 'cancel');
-    
+  if (Platform.OS === "web") {
+    const confirmButton = buttons.find((b) => b.style !== "cancel");
+    const cancelButton = buttons.find((b) => b.style === "cancel");
+
     const confirmed = window.confirm(`${title}\n\n${message}`);
-    
+
     if (confirmed && confirmButton?.onPress) {
       confirmButton.onPress();
     } else if (!confirmed && cancelButton?.onPress) {
@@ -28,7 +28,7 @@ export function showAlert(
 }
 
 export function showError(title: string, message: string): void {
-  if (Platform.OS === 'web') {
+  if (Platform.OS === "web") {
     window.alert(`${title}\n\n${message}`);
   } else {
     Alert.alert(title, message);

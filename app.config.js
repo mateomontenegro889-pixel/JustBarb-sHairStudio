@@ -11,22 +11,22 @@ export default ({ config }) => {
     newArchEnabled: true,
     ios: {
       supportsTablet: true,
-      bundleIdentifier: "com.ordertranscribe.app"
+      bundleIdentifier: "com.ordertranscribe.app",
     },
     android: {
       adaptiveIcon: {
         backgroundColor: "#2563EB",
         foregroundImage: "./assets/images/android-icon-foreground.png",
         backgroundImage: "./assets/images/android-icon-background.png",
-        monochromeImage: "./assets/images/android-icon-monochrome.png"
+        monochromeImage: "./assets/images/android-icon-monochrome.png",
       },
       edgeToEdgeEnabled: true,
       predictiveBackGestureEnabled: false,
-      package: "com.ordertranscribe.app"
+      package: "com.ordertranscribe.app",
     },
     web: {
       output: "single",
-      favicon: "./assets/images/favicon.png"
+      favicon: "./assets/images/favicon.png",
     },
     plugins: [
       [
@@ -37,17 +37,17 @@ export default ({ config }) => {
           resizeMode: "contain",
           backgroundColor: "#ffffff",
           dark: {
-            backgroundColor: "#000000"
-          }
-        }
+            backgroundColor: "#000000",
+          },
+        },
       ],
-      "expo-web-browser"
+      "expo-web-browser",
     ],
     experiments: {
-      reactCompiler: true
+      reactCompiler: true,
     },
     extra: {
-      openaiApiKey: process.env.EXPO_PUBLIC_OPENAI_API_KEY || null
-    }
+      openaiApiKey: process.env.EXPO_PUBLIC_OPENAI_API_KEY || null,
+    },
   };
 };

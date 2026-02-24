@@ -5,14 +5,15 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 import MainTabNavigator from "@/navigation/MainTabNavigator";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 export default function App() {
   return (
-  <ErrorBoundary>
-    <SafeAreaProvider>
+    <ErrorBoundary>
+      <SafeAreaProvider>
         <GestureHandlerRootView style={styles.root}>
           <KeyboardProvider>
             <NavigationContainer>
@@ -22,7 +23,8 @@ export default function App() {
           </KeyboardProvider>
         </GestureHandlerRootView>
       </SafeAreaProvider>
-  </ErrorBoundary>
+      <SpeedInsights />
+    </ErrorBoundary>
   );
 }
 
