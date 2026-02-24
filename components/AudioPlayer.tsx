@@ -31,12 +31,12 @@ export function AudioPlayer({ audioUri, duration = "0:00" }: AudioPlayerProps) {
 
   const togglePlayback = async () => {
     try {
-      if (Platform.OS === 'web') {
+      if (Platform.OS === "web") {
         if (!webAudioRef.current) {
           webAudioRef.current = new window.Audio(audioUri);
           webAudioRef.current.onended = () => setIsPlaying(false);
         }
-        
+
         if (isPlaying) {
           webAudioRef.current.pause();
           setIsPlaying(false);
@@ -63,7 +63,7 @@ export function AudioPlayer({ audioUri, duration = "0:00" }: AudioPlayerProps) {
         }
       }
     } catch (error) {
-      console.error('Playback error:', error);
+      console.error("Playback error:", error);
       setIsPlaying(false);
     }
   };

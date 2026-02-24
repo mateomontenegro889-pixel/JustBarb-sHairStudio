@@ -1,5 +1,13 @@
 import React, { useState, useCallback } from "react";
-import { View, StyleSheet, TextInput, FlatList, RefreshControl, Pressable, Platform } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TextInput,
+  FlatList,
+  RefreshControl,
+  Pressable,
+  Platform,
+} from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import { ThemedView } from "@/components/ThemedView";
@@ -13,7 +21,7 @@ import { Order } from "@/types/order";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
-type FilterType = 'all' | 'active' | 'completed';
+type FilterType = "all" | "active" | "completed";
 
 export default function HistoryListScreen() {
   const { theme } = useTheme();
@@ -23,27 +31,39 @@ export default function HistoryListScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [orders, setOrders] = useState<Order[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [activeFilter, setActiveFilter] = useState<FilterType>('all');
+  const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [stats, setStats] = useState({ active: 0, completed: 0, total: 0 });
 
   const loadOrders = useCallback(async () => {
     let allOrders = searchQuery
       ? await orderStore.search(searchQuery)
       : await orderStore.getAll();
-    
-    const active = allOrders.filter(o => o.status !== 'completed' && o.status !== 'closed').length;
-    const completed = allOrders.filter(o => o.status === 'completed' || o.status === 'closed').length;
+
+    const active = allOrders.filter(
+      (o) => o.status !== "completed" && o.status !== "closed",
+    ).length;
+    const completed = allOrders.filter(
+      (o) => o.status === "completed" || o.status === "closed",
+    ).length;
     setStats({ active, completed, total: allOrders.length });
-    
-    if (activeFilter === 'active') {
-      allOrders = allOrders.filter(o => o.status !== 'completed' && o.status !== 'closed');
-    } else if (activeFilter === 'completed') {
-      allOrders = allOrders.filter(o => o.status === 'completed' || o.status === 'closed');
+
+    if (activeFilter === "active") {
+      allOrders = allOrders.filter(
+        (o) => o.status !== "completed" && o.status !== "closed",
+      );
+    } else if (activeFilter === "completed") {
+      allOrders = allOrders.filter(
+        (o) => o.status === "completed" || o.status === "closed",
+      );
     }
     setOrders(allOrders);
   }, [searchQuery, activeFilter]);
 
-  useFocusEffect(useCallback(() => { loadOrders(); }, [loadOrders]));
+  useFocusEffect(
+    useCallback(() => {
+      loadOrders();
+    }, [loadOrders]),
+  );
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -66,19 +86,27 @@ export default function HistoryListScreen() {
   };
 
   const filters: { key: FilterType; label: string; count: number }[] = [
-    { key: 'all', label: 'All', count: stats.total },
-    { key: 'active', label: 'Active', count: stats.active },
-    { key: 'completed', label: 'Done', count: stats.completed },
+    { key: "all", label: "All", count: stats.total },
+    { key: "active", label: "Active", count: stats.active },
+    { key: "completed", label: "Done", count: stats.completed },
   ];
 
   return (
     <ThemedView style={styles.container}>
       <View style={styles.headerSection}>
-        <View style={[styles.searchContainer, { backgroundColor: theme.backgroundDefault, borderColor: theme.borderLight }]}>
+        <View
+          style={[
+            styles.searchContainer,
+            {
+              backgroundColor: theme.backgroundDefault,
+              borderColor: theme.borderLight,
+            },
+          ]}
+        >
           <Feather name="search" size={18} color={theme.textTertiary} />
           <TextInput
             value={searchQuery}
-            onChangeText={text => {
+            onChangeText={(text) => {
               setSearchQuery(text);
             }}
             onEndEditing={() => loadOrders()}
@@ -90,8 +118,11 @@ export default function HistoryListScreen() {
           />
           {searchQuery.length > 0 ? (
             <Pressable
-              onPress={() => { setSearchQuery(''); loadOrders(); }}
-              style={Platform.OS === 'web' ? { cursor: 'pointer' } : {}}
+              onPress={() => {
+                setSearchQuery("");
+                loadOrders();
+              }}
+              style={Platform.OS === "web" ? { cursor: "pointer" } : {}}
             >
               <Feather name="x-circle" size={16} color={theme.textTertiary} />
             </Pressable>
@@ -99,35 +130,56 @@ export default function HistoryListScreen() {
         </View>
 
         <View style={styles.filterRow}>
-          {filters.map(f => (
+          {filters.map((f) => (
             <Pressable
               key={f.key}
               onPress={() => setActiveFilter(f.key)}
               style={[
                 styles.filterButton,
-                { 
-                  backgroundColor: activeFilter === f.key ? theme.primary : theme.backgroundDefault,
-                  borderColor: activeFilter === f.key ? theme.primary : theme.border,
+                {
+                  backgroundColor:
+                    activeFilter === f.key
+                      ? theme.primary
+                      : theme.backgroundDefault,
+                  borderColor:
+                    activeFilter === f.key ? theme.primary : theme.border,
                 },
-                Platform.OS === 'web' ? { cursor: 'pointer' } : {},
+                Platform.OS === "web" ? { cursor: "pointer" } : {},
               ]}
             >
-              <ThemedText style={{
-                color: activeFilter === f.key ? theme.buttonText : theme.textSecondary,
-                fontWeight: activeFilter === f.key ? "600" : "400",
-                fontSize: 13,
-              }}>
+              <ThemedText
+                style={{
+                  color:
+                    activeFilter === f.key
+                      ? theme.buttonText
+                      : theme.textSecondary,
+                  fontWeight: activeFilter === f.key ? "600" : "400",
+                  fontSize: 13,
+                }}
+              >
                 {f.label}
               </ThemedText>
-              <View style={[
-                styles.filterCount,
-                { backgroundColor: activeFilter === f.key ? 'rgba(255,255,255,0.25)' : theme.backgroundSecondary }
-              ]}>
-                <ThemedText style={{
-                  color: activeFilter === f.key ? theme.buttonText : theme.textTertiary,
-                  fontSize: 11,
-                  fontWeight: '600',
-                }}>
+              <View
+                style={[
+                  styles.filterCount,
+                  {
+                    backgroundColor:
+                      activeFilter === f.key
+                        ? "rgba(255,255,255,0.25)"
+                        : theme.backgroundSecondary,
+                  },
+                ]}
+              >
+                <ThemedText
+                  style={{
+                    color:
+                      activeFilter === f.key
+                        ? theme.buttonText
+                        : theme.textTertiary,
+                    fontSize: 11,
+                    fontWeight: "600",
+                  }}
+                >
                   {f.count}
                 </ThemedText>
               </View>
@@ -138,7 +190,7 @@ export default function HistoryListScreen() {
 
       <FlatList
         data={orders}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <OrderCard
             orderText={item.transcribedText}
@@ -147,26 +199,42 @@ export default function HistoryListScreen() {
             tableNumber={item.tableNumber}
             guestCount={item.guestCount}
             status={item.status as any}
-            onPress={() => navigation.navigate("OrderDetail", { orderId: item.id })}
+            onPress={() =>
+              navigation.navigate("OrderDetail", { orderId: item.id })
+            }
           />
         )}
-        contentContainerStyle={[styles.listContent, { paddingBottom: tabBarHeight + Spacing.xl }]}
+        contentContainerStyle={[
+          styles.listContent,
+          { paddingBottom: tabBarHeight + Spacing.xl },
+        ]}
         ItemSeparatorComponent={() => <View style={{ height: Spacing.md }} />}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <View style={[styles.emptyIcon, { backgroundColor: theme.primarySoft }]}>
+            <View
+              style={[styles.emptyIcon, { backgroundColor: theme.primarySoft }]}
+            >
               <Feather name="clipboard" size={32} color={theme.primary} />
             </View>
             <ThemedText type="title" style={styles.emptyTitle}>
-              {searchQuery ? 'No results found' : 'No orders yet'}
+              {searchQuery ? "No results found" : "No orders yet"}
             </ThemedText>
-            <ThemedText type="caption" style={[styles.emptyText, { color: theme.textSecondary }]}>
-              {searchQuery ? 'Try a different search term' : 'Start recording to create your first order'}
+            <ThemedText
+              type="caption"
+              style={[styles.emptyText, { color: theme.textSecondary }]}
+            >
+              {searchQuery
+                ? "Try a different search term"
+                : "Start recording to create your first order"}
             </ThemedText>
           </View>
         }
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={theme.primary} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={theme.primary}
+          />
         }
       />
     </ThemedView>
@@ -200,8 +268,8 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   filterButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 6,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,
@@ -213,7 +281,7 @@ const styles = StyleSheet.create({
     paddingVertical: 1,
     borderRadius: BorderRadius.full,
     minWidth: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   listContent: {
     paddingHorizontal: Spacing.xl,

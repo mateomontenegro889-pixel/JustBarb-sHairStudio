@@ -10,7 +10,12 @@ interface CardProps {
   accentColor?: string;
 }
 
-export function Card({ elevation = 1, children, style, accentColor }: CardProps) {
+export function Card({
+  elevation = 1,
+  children,
+  style,
+  accentColor,
+}: CardProps) {
   const { theme, isDark } = useTheme();
 
   return (
@@ -30,8 +35,8 @@ export function Card({ elevation = 1, children, style, accentColor }: CardProps)
               elevation: 3,
             },
             web: {
-              boxShadow: isDark 
-                ? "0 2px 8px rgba(0, 0, 0, 0.3)" 
+              boxShadow: isDark
+                ? "0 2px 8px rgba(0, 0, 0, 0.3)"
                 : "0 2px 8px rgba(0, 0, 0, 0.08)",
             },
           }),

@@ -15,7 +15,9 @@ export default function DashboardStackNavigator() {
   const { theme, isDark } = useTheme();
 
   return (
-    <Stack.Navigator screenOptions={{ ...getCommonScreenOptions({ theme, isDark }) }}>
+    <Stack.Navigator
+      screenOptions={{ ...getCommonScreenOptions({ theme, isDark }) }}
+    >
       <Stack.Screen
         name="Dashboard"
         component={DashboardScreen}

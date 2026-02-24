@@ -1,5 +1,16 @@
 import { Order } from "@/types/order";
-import { getAllOrders, getOrderById, addOrder, searchOrders, initDatabase, deleteOrder, updateOrderStatus, appendToOrder, getTodayOrders, getOrderStats } from "./database";
+import {
+  getAllOrders,
+  getOrderById,
+  addOrder,
+  searchOrders,
+  initDatabase,
+  deleteOrder,
+  updateOrderStatus,
+  appendToOrder,
+  getTodayOrders,
+  getOrderStats,
+} from "./database";
 
 export const orderStore = {
   init: async (): Promise<void> => {
@@ -31,11 +42,11 @@ export const orderStore = {
   },
 
   closeOrder: async (id: string): Promise<void> => {
-    await updateOrderStatus(id, 'completed');
+    await updateOrderStatus(id, "completed");
   },
 
   reopenOrder: async (id: string): Promise<void> => {
-    await updateOrderStatus(id, 'new');
+    await updateOrderStatus(id, "new");
   },
 
   appendItems: async (id: string, additionalText: string): Promise<void> => {

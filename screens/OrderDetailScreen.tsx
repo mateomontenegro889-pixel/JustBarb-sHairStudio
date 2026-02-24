@@ -12,7 +12,12 @@ import { orderStore } from "@/utils/orderStore";
 import { showAlert, showError } from "@/utils/webAlert";
 import { ORDER_STATUS_CONFIG, STATUS_FLOW, OrderStatus } from "@/types/order";
 
-function StatusStep({ label, isActive, isCompleted, color }: {
+function StatusStep({
+  label,
+  isActive,
+  isCompleted,
+  color,
+}: {
   label: string;
   isActive: boolean;
   isCompleted: boolean;
@@ -21,20 +26,30 @@ function StatusStep({ label, isActive, isCompleted, color }: {
   const { theme } = useTheme();
   return (
     <View style={styles.statusStep}>
-      <View style={[
-        styles.statusStepDot,
-        {
-          backgroundColor: isCompleted || isActive ? color : theme.backgroundTertiary,
-          borderColor: isActive ? color : 'transparent',
-          borderWidth: isActive ? 2 : 0,
-        }
-      ]}>
-        {isCompleted ? <Feather name="check" size={10} color="#FFFFFF" /> : null}
+      <View
+        style={[
+          styles.statusStepDot,
+          {
+            backgroundColor:
+              isCompleted || isActive ? color : theme.backgroundTertiary,
+            borderColor: isActive ? color : "transparent",
+            borderWidth: isActive ? 2 : 0,
+          },
+        ]}
+      >
+        {isCompleted ? (
+          <Feather name="check" size={10} color="#FFFFFF" />
+        ) : null}
       </View>
-      <ThemedText style={[
-        styles.statusStepLabel,
-        { color: isActive || isCompleted ? color : theme.textTertiary, fontWeight: isActive ? '600' : '400' }
-      ]}>
+      <ThemedText
+        style={[
+          styles.statusStepLabel,
+          {
+            color: isActive || isCompleted ? color : theme.textTertiary,
+            fontWeight: isActive ? "600" : "400",
+          },
+        ]}
+      >
         {label}
       </ThemedText>
     </View>
@@ -61,12 +76,12 @@ export default function OrderDetailScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <View style={{ flexDirection: 'row', gap: Spacing.lg }}>
+        <View style={{ flexDirection: "row", gap: Spacing.lg }}>
           <Pressable
             onPress={handleShare}
             style={({ pressed }) => [
               { opacity: pressed ? 0.6 : 1 },
-              Platform.OS === 'web' ? { cursor: 'pointer' } : {},
+              Platform.OS === "web" ? { cursor: "pointer" } : {},
             ]}
           >
             <Feather name="share" size={20} color={theme.text} />
@@ -75,7 +90,7 @@ export default function OrderDetailScreen() {
             onPress={handleDelete}
             style={({ pressed }) => [
               { opacity: pressed ? 0.6 : 1 },
-              Platform.OS === 'web' ? { cursor: 'pointer' } : {},
+              Platform.OS === "web" ? { cursor: "pointer" } : {},
             ]}
           >
             <Feather name="trash-2" size={20} color={theme.error} />
@@ -117,17 +132,17 @@ export default function OrderDetailScreen() {
   const handleShare = async () => {
     if (!order) return;
     try {
-      const tableInfo = order.tableNumber ? `Table ${order.tableNumber}` : '';
-      const guestInfo = order.guestCount ? `${order.guestCount} guests` : '';
-      const headerInfo = [tableInfo, guestInfo].filter(Boolean).join(' - ');
-      const shareText = `Order from ${order.staffName}${headerInfo ? `\n${headerInfo}` : ''}\n\n${order.transcribedText}\n\nRecorded: ${new Date(order.timestamp).toLocaleString()}`;
-      
-      if (Platform.OS === 'web') {
+      const tableInfo = order.tableNumber ? `Table ${order.tableNumber}` : "";
+      const guestInfo = order.guestCount ? `${order.guestCount} guests` : "";
+      const headerInfo = [tableInfo, guestInfo].filter(Boolean).join(" - ");
+      const shareText = `Order from ${order.staffName}${headerInfo ? `\n${headerInfo}` : ""}\n\n${order.transcribedText}\n\nRecorded: ${new Date(order.timestamp).toLocaleString()}`;
+
+      if (Platform.OS === "web") {
         if (navigator.share) {
           await navigator.share({ text: shareText });
         } else {
           await navigator.clipboard.writeText(shareText);
-          window.alert('Order copied to clipboard!');
+          window.alert("Order copied to clipboard!");
         }
       } else {
         await Share.share({ message: shareText });
@@ -138,8 +153,13 @@ export default function OrderDetailScreen() {
   };
 
   const getNextStatus = (): string | null => {
-    const currentStatus = order?.status || 'new';
-    const normalizedStatus = currentStatus === 'open' ? 'new' : currentStatus === 'closed' ? 'completed' : currentStatus;
+    const currentStatus = order?.status || "new";
+    const normalizedStatus =
+      currentStatus === "open"
+        ? "new"
+        : currentStatus === "closed"
+          ? "completed"
+          : currentStatus;
     const currentIndex = STATUS_FLOW.indexOf(normalizedStatus as OrderStatus);
     if (currentIndex < STATUS_FLOW.length - 1) {
       return STATUS_FLOW[currentIndex + 1];
@@ -148,8 +168,13 @@ export default function OrderDetailScreen() {
   };
 
   const getCurrentStatusIndex = (): number => {
-    const currentStatus = order?.status || 'new';
-    const normalizedStatus = currentStatus === 'open' ? 'new' : currentStatus === 'closed' ? 'completed' : currentStatus;
+    const currentStatus = order?.status || "new";
+    const normalizedStatus =
+      currentStatus === "open"
+        ? "new"
+        : currentStatus === "closed"
+          ? "completed"
+          : currentStatus;
     return STATUS_FLOW.indexOf(normalizedStatus as OrderStatus);
   };
 
@@ -169,11 +194,12 @@ export default function OrderDetailScreen() {
     );
   }
 
-  const statusConfig = ORDER_STATUS_CONFIG[order.status || 'new'] || ORDER_STATUS_CONFIG['new'];
+  const statusConfig =
+    ORDER_STATUS_CONFIG[order.status || "new"] || ORDER_STATUS_CONFIG["new"];
   const nextStatus = getNextStatus();
   const nextStatusConfig = nextStatus ? ORDER_STATUS_CONFIG[nextStatus] : null;
   const currentIndex = getCurrentStatusIndex();
-  const isCompleted = order.status === 'completed' || order.status === 'closed';
+  const isCompleted = order.status === "completed" || order.status === "closed";
 
   return (
     <ScreenScrollView contentContainerStyle={styles.container}>
@@ -181,32 +207,84 @@ export default function OrderDetailScreen() {
         <View style={styles.topCardContent}>
           <View style={styles.tableGuestRow}>
             <View style={styles.infoBlock}>
-              <View style={[styles.infoIcon, { backgroundColor: theme.primarySoft }]}>
+              <View
+                style={[
+                  styles.infoIcon,
+                  { backgroundColor: theme.primarySoft },
+                ]}
+              >
                 <Feather name="grid" size={20} color={theme.primary} />
               </View>
               <View>
-                <ThemedText type="caption" style={{ color: theme.textSecondary }}>Table</ThemedText>
-                <ThemedText style={[styles.infoValue, { color: theme.text }]}>{order.tableNumber || '-'}</ThemedText>
+                <ThemedText
+                  type="caption"
+                  style={{ color: theme.textSecondary }}
+                >
+                  Table
+                </ThemedText>
+                <ThemedText style={[styles.infoValue, { color: theme.text }]}>
+                  {order.tableNumber || "-"}
+                </ThemedText>
               </View>
             </View>
-            <View style={[styles.infoDivider, { backgroundColor: theme.borderLight }]} />
+            <View
+              style={[
+                styles.infoDivider,
+                { backgroundColor: theme.borderLight },
+              ]}
+            />
             <View style={styles.infoBlock}>
-              <View style={[styles.infoIcon, { backgroundColor: theme.primarySoft }]}>
+              <View
+                style={[
+                  styles.infoIcon,
+                  { backgroundColor: theme.primarySoft },
+                ]}
+              >
                 <Feather name="users" size={20} color={theme.primary} />
               </View>
               <View>
-                <ThemedText type="caption" style={{ color: theme.textSecondary }}>Guests</ThemedText>
-                <ThemedText style={[styles.infoValue, { color: theme.text }]}>{order.guestCount || '-'}</ThemedText>
+                <ThemedText
+                  type="caption"
+                  style={{ color: theme.textSecondary }}
+                >
+                  Guests
+                </ThemedText>
+                <ThemedText style={[styles.infoValue, { color: theme.text }]}>
+                  {order.guestCount || "-"}
+                </ThemedText>
               </View>
             </View>
-            <View style={[styles.infoDivider, { backgroundColor: theme.borderLight }]} />
+            <View
+              style={[
+                styles.infoDivider,
+                { backgroundColor: theme.borderLight },
+              ]}
+            />
             <View style={styles.infoBlock}>
-              <View style={[styles.statusBadgeLg, { backgroundColor: statusConfig.bgColor }]}>
-                <Feather name={statusConfig.icon as any} size={14} color={statusConfig.color} />
+              <View
+                style={[
+                  styles.statusBadgeLg,
+                  { backgroundColor: statusConfig.bgColor },
+                ]}
+              >
+                <Feather
+                  name={statusConfig.icon as any}
+                  size={14}
+                  color={statusConfig.color}
+                />
               </View>
               <View>
-                <ThemedText type="caption" style={{ color: theme.textSecondary }}>Status</ThemedText>
-                <ThemedText style={[styles.infoValue, { color: statusConfig.color }]}>{statusConfig.label}</ThemedText>
+                <ThemedText
+                  type="caption"
+                  style={{ color: theme.textSecondary }}
+                >
+                  Status
+                </ThemedText>
+                <ThemedText
+                  style={[styles.infoValue, { color: statusConfig.color }]}
+                >
+                  {statusConfig.label}
+                </ThemedText>
               </View>
             </View>
           </View>
@@ -214,7 +292,10 @@ export default function OrderDetailScreen() {
       </Card>
 
       <View style={styles.section}>
-        <ThemedText type="caption" style={[styles.sectionTitle, { color: theme.textTertiary }]}>
+        <ThemedText
+          type="caption"
+          style={[styles.sectionTitle, { color: theme.textTertiary }]}
+        >
           ORDER PROGRESS
         </ThemedText>
         <Card style={styles.progressCard}>
@@ -226,10 +307,16 @@ export default function OrderDetailScreen() {
               return (
                 <React.Fragment key={status}>
                   {index > 0 ? (
-                    <View style={[
-                      styles.progressLine,
-                      { backgroundColor: isStepCompleted ? statusConfig.color : theme.backgroundTertiary }
-                    ]} />
+                    <View
+                      style={[
+                        styles.progressLine,
+                        {
+                          backgroundColor: isStepCompleted
+                            ? statusConfig.color
+                            : theme.backgroundTertiary,
+                        },
+                      ]}
+                    />
                   ) : null}
                   <StatusStep
                     label={config.label}
@@ -245,14 +332,20 @@ export default function OrderDetailScreen() {
       </View>
 
       <View style={styles.section}>
-        <ThemedText type="caption" style={[styles.sectionTitle, { color: theme.textTertiary }]}>
+        <ThemedText
+          type="caption"
+          style={[styles.sectionTitle, { color: theme.textTertiary }]}
+        >
           AUDIO RECORDING
         </ThemedText>
         <AudioPlayer audioUri={order.audioUri} duration={order.duration} />
       </View>
 
       <View style={styles.section}>
-        <ThemedText type="caption" style={[styles.sectionTitle, { color: theme.textTertiary }]}>
+        <ThemedText
+          type="caption"
+          style={[styles.sectionTitle, { color: theme.textTertiary }]}
+        >
           ORDER ITEMS
         </ThemedText>
         <Card style={styles.orderCard}>
@@ -263,30 +356,45 @@ export default function OrderDetailScreen() {
       </View>
 
       <View style={styles.section}>
-        <ThemedText type="caption" style={[styles.sectionTitle, { color: theme.textTertiary }]}>
+        <ThemedText
+          type="caption"
+          style={[styles.sectionTitle, { color: theme.textTertiary }]}
+        >
           DETAILS
         </ThemedText>
         <Card style={styles.metaCard}>
           <View style={styles.metaRow}>
             <View style={styles.metaLabel}>
               <Feather name="clock" size={14} color={theme.textTertiary} />
-              <ThemedText type="caption" style={{ color: theme.textSecondary }}>Time</ThemedText>
+              <ThemedText type="caption" style={{ color: theme.textSecondary }}>
+                Time
+              </ThemedText>
             </View>
-            <ThemedText style={styles.metaValue}>{new Date(order.timestamp).toLocaleString()}</ThemedText>
+            <ThemedText style={styles.metaValue}>
+              {new Date(order.timestamp).toLocaleString()}
+            </ThemedText>
           </View>
-          <View style={[styles.metaDivider, { backgroundColor: theme.borderLight }]} />
+          <View
+            style={[styles.metaDivider, { backgroundColor: theme.borderLight }]}
+          />
           <View style={styles.metaRow}>
             <View style={styles.metaLabel}>
               <Feather name="user" size={14} color={theme.textTertiary} />
-              <ThemedText type="caption" style={{ color: theme.textSecondary }}>Staff</ThemedText>
+              <ThemedText type="caption" style={{ color: theme.textSecondary }}>
+                Staff
+              </ThemedText>
             </View>
             <ThemedText style={styles.metaValue}>{order.staffName}</ThemedText>
           </View>
-          <View style={[styles.metaDivider, { backgroundColor: theme.borderLight }]} />
+          <View
+            style={[styles.metaDivider, { backgroundColor: theme.borderLight }]}
+          />
           <View style={styles.metaRow}>
             <View style={styles.metaLabel}>
               <Feather name="mic" size={14} color={theme.textTertiary} />
-              <ThemedText type="caption" style={{ color: theme.textSecondary }}>Duration</ThemedText>
+              <ThemedText type="caption" style={{ color: theme.textSecondary }}>
+                Duration
+              </ThemedText>
             </View>
             <ThemedText style={styles.metaValue}>{order.duration}</ThemedText>
           </View>
@@ -296,7 +404,9 @@ export default function OrderDetailScreen() {
       <View style={styles.actionRow}>
         {!isCompleted ? (
           <Pressable
-            onPress={() => navigation.navigate('RecordMore', { existingOrderId: order.id })}
+            onPress={() =>
+              navigation.navigate("RecordMore", { existingOrderId: order.id })
+            }
             style={({ pressed }) => [
               styles.actionBtn,
               {
@@ -305,11 +415,15 @@ export default function OrderDetailScreen() {
                 borderWidth: 1.5,
                 opacity: pressed ? 0.8 : 1,
               },
-              Platform.OS === 'web' ? { cursor: 'pointer' } : {},
+              Platform.OS === "web" ? { cursor: "pointer" } : {},
             ]}
           >
             <Feather name="mic" size={18} color={theme.primary} />
-            <ThemedText style={[styles.actionBtnText, { color: theme.primary }]}>Add Items</ThemedText>
+            <ThemedText
+              style={[styles.actionBtnText, { color: theme.primary }]}
+            >
+              Add Items
+            </ThemedText>
           </Pressable>
         ) : null}
         {nextStatus && nextStatusConfig ? (
@@ -322,10 +436,14 @@ export default function OrderDetailScreen() {
                 flex: 1,
                 opacity: pressed ? 0.8 : 1,
               },
-              Platform.OS === 'web' ? { cursor: 'pointer' } : {},
+              Platform.OS === "web" ? { cursor: "pointer" } : {},
             ]}
           >
-            <Feather name={nextStatusConfig.icon as any} size={18} color="#FFFFFF" />
+            <Feather
+              name={nextStatusConfig.icon as any}
+              size={18}
+              color="#FFFFFF"
+            />
             <ThemedText style={styles.actionBtnTextWhite}>
               Mark as {nextStatusConfig.label}
             </ThemedText>
@@ -333,7 +451,7 @@ export default function OrderDetailScreen() {
         ) : null}
         {isCompleted ? (
           <Pressable
-            onPress={() => handleStatusChange('new')}
+            onPress={() => handleStatusChange("new")}
             style={({ pressed }) => [
               styles.actionBtn,
               {
@@ -341,11 +459,13 @@ export default function OrderDetailScreen() {
                 flex: 1,
                 opacity: pressed ? 0.8 : 1,
               },
-              Platform.OS === 'web' ? { cursor: 'pointer' } : {},
+              Platform.OS === "web" ? { cursor: "pointer" } : {},
             ]}
           >
             <Feather name="refresh-cw" size={18} color="#FFFFFF" />
-            <ThemedText style={styles.actionBtnTextWhite}>Reopen Order</ThemedText>
+            <ThemedText style={styles.actionBtnTextWhite}>
+              Reopen Order
+            </ThemedText>
           </Pressable>
         ) : null}
       </View>
@@ -400,28 +520,28 @@ const styles = StyleSheet.create({
   },
   progressCard: { padding: Spacing.lg },
   progressTrack: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   progressLine: {
     height: 2,
     width: 20,
   },
   statusStep: {
-    alignItems: 'center',
+    alignItems: "center",
     gap: 4,
   },
   statusStepDot: {
     width: 20,
     height: 20,
     borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   statusStepLabel: {
     fontSize: 9,
-    textAlign: 'center',
+    textAlign: "center",
   },
   orderCard: { padding: Spacing.lg },
   orderText: {
@@ -436,13 +556,13 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
   },
   metaLabel: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.sm,
   },
   metaValue: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   metaDivider: {
     height: 1,
