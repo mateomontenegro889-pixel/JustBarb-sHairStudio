@@ -89,7 +89,7 @@ export default function ConfirmOrderScreen() {
         </Pressable>
       ),
     });
-  }, [navigation, orderText, theme]);
+  }, [navigation, orderText, theme, tableNumber, guestCount]);
 
   const handleCancel = () => {
     showAlert("Cancel Order", "Are you sure you want to discard this order?", [
