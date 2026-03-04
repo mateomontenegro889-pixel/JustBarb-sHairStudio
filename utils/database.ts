@@ -3,10 +3,20 @@ import { Order } from "@/types/order";
 
 const STORAGE_KEY = "order_transcribe_orders";
 
+function normalizeOrder(order: any): Order {
+  return {
+    ...order,
+    tableNumber: order.tableNumber != null ? Number(order.tableNumber) : undefined,
+    guestCount: order.guestCount != null ? Number(order.guestCount) : undefined,
+    totalItems: order.totalItems != null ? Number(order.totalItems) : 0,
+  };
+}
+
 function getStoredOrders(): Order[] {
   try {
     const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
+    const raw = data ? JSON.parse(data) : [];
+    return raw.map(normalizeOrder);
   } catch {
     return [];
   }
