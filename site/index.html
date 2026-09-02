@@ -153,16 +153,6 @@ ul { list-style: none; }
   mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-.load-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: var(--bone);
-  pointer-events: none;
-}
-.js-enabled .load-overlay { display: block; }
-html:not(.js-enabled) .load-overlay { display: none; }
-
 /* ======================================================================
    4. TYPOGRAPHY
    ====================================================================== */
@@ -392,13 +382,10 @@ section { position: relative; }
 }
 .hero-headline .line {
   display: block;
-  overflow: hidden;
 }
 .hero-headline .line span {
   display: inline-block;
-  transform: translateY(110%);
 }
-html:not(.js-enabled) .hero-headline .line span { transform: none; }
 .hero-headline .line:nth-child(2) { color: var(--clay); }
 
 .hero-copy p {
@@ -986,9 +973,7 @@ a:focus-visible, button:focus-visible {
    ====================================================================== */
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
-  .load-overlay { display: none !important; }
   [data-animate] { opacity: 1 !important; transform: none !important; }
-  .hero-headline .line span { transform: none !important; }
   .hairline { transform: scaleX(1) !important; }
   .gallery-clip { clip-path: none !important; }
   .cursor-dot, .cursor-ring { display: none !important; }
@@ -998,7 +983,6 @@ a:focus-visible, button:focus-visible {
 </head>
 <body>
 
-<div class="load-overlay" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 <div class="cursor-dot" aria-hidden="true"></div>
 <div class="cursor-ring" aria-hidden="true"></div>
@@ -1038,18 +1022,18 @@ a:focus-visible, button:focus-visible {
   <section class="hero">
     <div class="wrap">
       <div class="hero-copy">
-        <p class="eyebrow" data-animate>Southwest Calgary · Since Barb opened her chair</p>
+        <p class="eyebrow">Southwest Calgary · Since Barb opened her chair</p>
         <h1 class="hero-headline">
           <span class="line"><span>Your hair,</span></span>
           <span class="line"><span>cut exactly</span></span>
           <span class="line"><span>the way you asked.</span></span>
         </h1>
-        <p data-animate>One chair, one stylist, and a studio on Elbow Drive where nobody's trying to sell you a fourth product you didn't ask for. Just a good, exact haircut, done by Barb, every time.</p>
-        <div class="hero-actions" data-animate>
+        <p>One chair, one stylist, and a studio on Elbow Drive where nobody's trying to sell you a fourth product you didn't ask for. Just a good, exact haircut, done by Barb, every time.</p>
+        <div class="hero-actions">
           <a href="tel:+14032555622" class="btn btn-primary magnetic">Call to book</a>
           <a href="#gallery" class="btn btn-ghost magnetic">See the work</a>
         </div>
-        <div class="hero-ratings" data-animate>
+        <div class="hero-ratings">
           <span class="stars">★★★★★</span>
           <span><strong class="count-up" data-target="4.8">0.0</strong> on Google · <strong class="count-up" data-target="5.0">0.0</strong> on Yelp</span>
         </div>
@@ -1435,28 +1419,12 @@ document.querySelectorAll('a[href^="#"]').forEach(function (link) {
 });
 
 /* ==========================================================================
-   6. PAGE LOAD CHOREOGRAPHY
+   6. LOAD FALLBACK
+   The hero itself no longer has a page-load animation — it renders
+   immediately, so there's nothing there to keep in sync. This just
+   backstops any [data-animate] element elsewhere on the page in case
+   GSAP fails to load.
    ========================================================================== */
-function runLoadAnimation() {
-  var overlay = document.querySelector('.load-overlay');
-  var lines = document.querySelectorAll('.hero-headline .line span');
-
-  if (!hasGSAP || reduceMotion) {
-    if (overlay) overlay.style.display = 'none';
-    // The headline lines are only ever reset by the GSAP timeline below —
-    // without it they'd stay clipped at translateY(110%) forever.
-    lines.forEach(function (span) { span.style.transform = 'none'; });
-    gsapFallbackShow();
-    return;
-  }
-
-  gsap.set(lines, { yPercent: 110 });
-  var tl = gsap.timeline();
-  tl.to(overlay, { yPercent: -100, duration: 0.9, ease: 'power4.inOut' })
-    .set(overlay, { display: 'none' })
-    .to(lines, { yPercent: 0, duration: 1.1, ease: 'expo.out', stagger: 0.09 }, '-=0.5')
-    .to('.hero-copy [data-animate]', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', stagger: 0.1 }, '-=0.6');
-}
 function gsapFallbackShow() {
   document.querySelectorAll('[data-animate]').forEach(function (el) { el.style.opacity = 1; });
 }
@@ -1468,7 +1436,6 @@ function initScrollReveals() {
   if (!hasGSAP || reduceMotion) { gsapFallbackShow(); return; }
 
   gsap.set('[data-animate]', { y: 40 });
-  gsap.set('.hero-copy [data-animate]', { clearProps: 'y' }); // handled by load timeline
 
   var sections = document.querySelectorAll('main section, footer');
   sections.forEach(function (section) {
@@ -1832,7 +1799,6 @@ function initReviewSlider() {
    16. INIT
    ========================================================================== */
 window.addEventListener('DOMContentLoaded', function () {
-  runLoadAnimation();
   initScrollReveals();
   initSplitHeadlines();
   initParallax();
