@@ -780,28 +780,25 @@ section { position: relative; }
   align-items: center;
   justify-content: center;
 }
-.map-block svg { width: 70%; height: auto; }
+.map-block iframe { width: 100%; height: 100%; border: 0; display: block; }
 .map-block .map-caption {
   position: absolute;
-  bottom: 22px; left: 22px; right: 22px;
+  top: 22px; left: 22px; right: 22px;
   font-size: 13px;
   color: var(--ink-soft);
   background: var(--bone);
   padding: 10px 14px;
   border-radius: 2px;
   border: 1px solid var(--linen);
+  pointer-events: none;
 }
 /*
-  MAP EMBED — to drop in a live Google Maps iframe, replace the
-  .map-block contents with something like:
+  MAP EMBED — this uses Google's keyless embed ("output=embed"), which
+  needs no API key or billing account. If you'd rather use the official
+  Maps Embed API (more reliable long-term, requires a key and billing),
+  swap the iframe's src for:
 
-  <iframe
-    src="https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=9620+Elbow+Drive+SW,+Calgary,+AB+T2V+1M2"
-    width="100%" height="100%" style="border:0" loading="lazy"
-    referrerpolicy="no-referrer-when-downgrade"
-    title="Map to Just Barb's Hair Studio"></iframe>
-
-  This file intentionally loads no map script by default.
+  https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=9620+Elbow+Drive+SW,+Calgary,+AB+T2V+1M2
 */
 
 /* ======================================================================
@@ -1245,22 +1242,12 @@ a:focus-visible, button:focus-visible {
         <span class="status-pill" id="statusPill" data-animate><span class="dot"></span><span id="statusText">Checking hours…</span></span>
       </div>
       <div class="map-block" data-animate>
-        <!--
-          Static placeholder map. To use a live embed, see the CSS comment
-          above .map-block for the Google Maps iframe snippet. No map
-          script is loaded by default.
-        -->
-        <svg viewBox="0 0 300 340" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Map showing Just Barb's Hair Studio location on Elbow Drive SW">
-          <rect width="300" height="340" fill="#EDE3D6"/>
-          <path d="M0 90H300" stroke="#E2D5C3" stroke-width="2"/>
-          <path d="M0 190H300" stroke="#E2D5C3" stroke-width="2"/>
-          <path d="M70 0V340" stroke="#E2D5C3" stroke-width="2"/>
-          <path d="M220 0V340" stroke="#E2D5C3" stroke-width="2"/>
-          <circle cx="150" cy="150" r="14" fill="#C07A50"/>
-          <path d="M150 130C138 130 128 140 128 152C128 168 150 190 150 190C150 190 172 168 172 152C172 140 162 130 150 130Z" fill="#C07A50"/>
-          <circle cx="150" cy="151" r="6" fill="#F8F4EE"/>
-          <text x="150" y="230" text-anchor="middle" font-family="Inter Tight, sans-serif" font-size="12" fill="#6B5C52">Elbow Drive SW</text>
-        </svg>
+        <!-- See the CSS comment above .map-block for how to switch to a keyed Maps Embed API URL. -->
+        <iframe
+          src="https://www.google.com/maps?q=Just+Barb%27s+Hair+Studio,9620+Elbow+Drive+SW,+Calgary,+AB+T2V+1M2&output=embed"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Map to Just Barb's Hair Studio, 9620 Elbow Drive SW, Calgary"></iframe>
         <div class="map-caption">9620 Elbow Drive SW — near Heritage, Haysboro</div>
       </div>
     </div>
