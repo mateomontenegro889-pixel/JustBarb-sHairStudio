@@ -1,0 +1,1805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+document.documentElement.classList.add('js-enabled');
+/* Defined here (before any <img> below can fail to load) so an
+   onerror="phFallback(this)" handler always has something to call. */
+function phFallback(img) {
+  img.onerror = null;
+  var w = img.getAttribute('width') || 600;
+  var h = img.getAttribute('height') || 400;
+  var name = img.dataset.name || 'image.jpg';
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '">' +
+    '<rect width="100%" height="100%" fill="#EDE3D6"/>' +
+    '<rect x="0.5" y="0.5" width="' + (w - 1) + '" height="' + (h - 1) + '" fill="none" stroke="#C07A50" stroke-width="1" stroke-dasharray="6 6"/>' +
+    '<text x="50%" y="46%" text-anchor="middle" font-family="Inter Tight, sans-serif" font-size="' + Math.max(12, Math.min(w, h) * 0.055) + '" fill="#9A5A36">' + name + '</text>' +
+    '<text x="50%" y="56%" text-anchor="middle" font-family="Inter Tight, sans-serif" font-size="' + Math.max(10, Math.min(w, h) * 0.045) + '" fill="#6B5C52">' + w + ' × ' + h + '</text>' +
+    '</svg>';
+  img.src = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+}
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Just Barb's Hair Studio — Hairdresser in Southwest Calgary</title>
+<meta name="description" content="A one-chair, independent hair studio on Elbow Drive in Southwest Calgary. Cuts, colour, balayage and blowouts from Barb — no upselling, no games, just a good exact haircut.">
+<meta name="theme-color" content="#F8F4EE">
+
+<!-- Open Graph -->
+<meta property="og:type" content="business.business">
+<meta property="og:title" content="Just Barb's Hair Studio — Hairdresser in Southwest Calgary">
+<meta property="og:description" content="A one-chair, independent hair studio on Elbow Drive in Southwest Calgary. Cuts, colour, balayage and blowouts from Barb — no upselling, no games, just a good exact haircut.">
+<meta property="og:locale" content="en_CA">
+<meta property="og:site_name" content="Just Barb's Hair Studio">
+
+<!--
+  ============================================================
+  IMAGES NEEDED — filenames, ideal size, and what to show.
+  Drop real photos in with these exact filenames and the
+  onerror fallback placeholders below will disappear on
+  their own — no code changes required.
+  ============================================================
+  hero-studio.jpg      900×1200   Tall portrait — a wide shot of the studio
+                                   chair, mirror and window light. This sits
+                                   in the arch frame beside the headline.
+  hero-detail.jpg      600×600    Square — a close, warm detail shot: scissors
+                                   on the station, product shelf, or hands
+                                   mid-cut. Overlaps the corner of hero-studio.
+  intro-barb.jpg        (unused directly — reserved, safe to ignore)
+  service-cuts.jpg      480×360   Landscape — a finished cut, front or back view.
+  service-colour.jpg    480×360   Landscape — colour/highlight result in good light.
+  service-balayage.jpg  480×360   Landscape — balayage or toned ends close-up.
+  service-kids.jpg      480×360   Landscape — a kid-friendly, relaxed studio moment.
+  service-styling.jpg   480×360   Landscape — a blowout or finished style.
+  service-products.jpg  480×360   Landscape — the retail shelf (Moroccanoil, Verb).
+  gallery-01.jpg         600×800  Portrait — studio interior, wide.
+  gallery-02.jpg         600×600  Square — a finished cut.
+  gallery-03.jpg         800×550  Landscape — station detail.
+  gallery-04.jpg         600×800  Portrait — colour work close-up.
+  gallery-05.jpg         600×600  Square — product shelf.
+  gallery-06.jpg         800×550  Landscape — the chair and mirror.
+  gallery-07.jpg         600×800  Portrait — balayage result.
+  gallery-08.jpg         600×600  Square — the studio's kid corner (toys/books).
+  ============================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HairSalon",
+  "name": "Just Barb's Hair Studio",
+  "image": "hero-studio.jpg",
+  "telephone": "+1-403-255-5622",
+  "priceRange": "$$",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "9620 Elbow Drive SW",
+    "addressLocality": "Calgary",
+    "addressRegion": "AB",
+    "postalCode": "T2V 1M2",
+    "addressCountry": "CA"
+  },
+  "openingHoursSpecification": [
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "09:00", "closes": "19:00" },
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "09:00", "closes": "17:00" }
+  ],
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "reviewCount": "8"
+  }
+}
+</script>
+
+<style>
+/* ======================================================================
+   1. RESET + BASE
+   ====================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: auto; }
+body {
+  margin: 0;
+  background: var(--bone);
+  color: var(--ink-soft);
+  font-family: 'Inter Tight', -apple-system, 'Segoe UI', sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+h1, h2, h3, p, ul, figure { margin: 0; padding: 0; }
+ul { list-style: none; }
+
+/* ======================================================================
+   2. DESIGN TOKENS — palette, do not substitute
+   ====================================================================== */
+:root {
+  --bone:        #F8F4EE;
+  --sand:        #EDE3D6;
+  --linen:       #E2D5C3;
+  --clay:        #C07A50;
+  --clay-deep:   #9A5A36;
+  --espresso:    #2A211C;
+  --ink-soft:    #6B5C52;
+  --gold:        #C9A227;
+
+  --serif: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+  --sans: 'Inter Tight', -apple-system, 'Segoe UI', sans-serif;
+
+  --shadow-soft: 0 24px 60px -20px rgba(42, 33, 28, 0.18);
+  --nav-h: 84px;
+}
+
+/* Elements GSAP will animate start visible; only get hidden once JS
+   confirms it can run and take over the reveal. This guarantees content
+   is never stuck invisible if a script fails to load. */
+[data-animate] { opacity: 1; }
+.js-enabled [data-animate] { opacity: 0; }
+
+/* ======================================================================
+   3. GRAIN OVERLAY + LOAD OVERLAY
+   ====================================================================== */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* ======================================================================
+   4. TYPOGRAPHY
+   ====================================================================== */
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--clay-deep);
+  font-weight: 600;
+  margin-bottom: 22px;
+}
+.eyebrow::before {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 1px;
+  background: var(--clay-deep);
+  transform-origin: left center;
+}
+.js-enabled .eyebrow::before { transform: scaleX(0); }
+
+h2.section-heading {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+  line-height: 1.05;
+  color: var(--espresso);
+  letter-spacing: -0.01em;
+}
+
+.section-body {
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--ink-soft);
+  max-width: 62ch;
+}
+
+.hairline {
+  height: 1px;
+  width: 100%;
+  background: var(--linen);
+  transform-origin: left center;
+}
+.js-enabled .hairline { transform: scaleX(0); }
+
+/* ======================================================================
+   5. LAYOUT HELPERS
+   ====================================================================== */
+.wrap {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 6vw;
+}
+section { position: relative; }
+.bg-bone { background: var(--bone); }
+.bg-sand { background: var(--sand); }
+.bg-espresso { background: var(--espresso); }
+
+/* ======================================================================
+   6. NAV
+   ====================================================================== */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 500;
+  height: var(--nav-h);
+  transition: background 0.4s ease, border-color 0.4s ease, backdrop-filter 0.4s ease, height 0.4s ease;
+  border-bottom: 1px solid transparent;
+}
+.nav.scrolled {
+  background: rgba(248, 244, 238, 0.92);
+  backdrop-filter: blur(10px);
+  border-bottom-color: var(--linen);
+  height: 68px;
+}
+.nav-inner {
+  max-width: 1320px;
+  margin: 0 auto;
+  height: 100%;
+  padding: 0 6vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.nav-logo {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--espresso);
+  letter-spacing: -0.01em;
+}
+.nav-links {
+  display: flex;
+  gap: 40px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.nav-links a {
+  position: relative;
+  padding: 4px 0;
+  color: var(--espresso);
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%; height: 1px;
+  background: var(--clay);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.35s ease;
+}
+.nav-links a:hover::after,
+.nav-links a:focus-visible::after { transform: scaleX(1); }
+
+.nav-call {
+  border: 1px solid var(--clay);
+  color: var(--clay-deep);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 11px 22px;
+  border-radius: 2px;
+  white-space: nowrap;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.nav-call:hover, .nav-call:focus-visible { background: var(--clay); color: var(--bone); }
+
+.nav-toggle {
+  display: none;
+  width: 32px; height: 22px;
+  position: relative;
+  background: none;
+  border: none;
+  padding: 0;
+}
+.nav-toggle span {
+  position: absolute;
+  left: 0; right: 0;
+  height: 1px;
+  background: var(--espresso);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.nav-toggle span:nth-child(1) { top: 0; }
+.nav-toggle span:nth-child(2) { top: 50%; margin-top: -0.5px; }
+.nav-toggle span:nth-child(3) { bottom: 0; }
+.nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(10.5px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-10.5px) rotate(-45deg); }
+
+.mobile-menu {
+  position: fixed;
+  inset: 0;
+  top: 0;
+  z-index: 490;
+  background: var(--bone);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  transform: translateY(-100%);
+  transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.mobile-menu.open { transform: translateY(0); }
+.mobile-menu a {
+  font-family: var(--serif);
+  font-size: 34px;
+  color: var(--espresso);
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.mobile-menu.open a { opacity: 1; transform: translateY(0); }
+.mobile-menu.open a:nth-child(1) { transition-delay: 0.08s; }
+.mobile-menu.open a:nth-child(2) { transition-delay: 0.15s; }
+.mobile-menu.open a:nth-child(3) { transition-delay: 0.22s; }
+.mobile-menu.open a:nth-child(4) { transition-delay: 0.29s; }
+.mobile-menu.open a:nth-child(5) { transition-delay: 0.36s; }
+.mobile-menu-call {
+  margin-top: 8px;
+  border: 1px solid var(--clay);
+  color: var(--clay-deep) !important;
+  font-family: var(--sans) !important;
+  font-size: 14px !important;
+  font-weight: 600;
+  padding: 12px 26px;
+}
+
+/* ======================================================================
+   7. HERO
+   ====================================================================== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: calc(var(--nav-h) + 40px) 0 80px;
+  overflow: hidden;
+}
+.hero .wrap {
+  display: grid;
+  grid-template-columns: 55% 45%;
+  gap: 40px;
+  align-items: center;
+  width: 100%;
+}
+.hero-copy { max-width: 620px; }
+.hero-headline {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(3.2rem, 9vw, 8rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--espresso);
+  margin: 0 0 28px;
+  /* Selecting text while the lines below are still sliding in on a GSAP
+     transform makes the browser's selection-highlight painting fall out
+     of sync with the animating glyph position — letters can appear to
+     go missing mid-drag. The headline is display type, not copy anyone
+     needs to select, so it's simplest to make it unselectable outright. */
+  user-select: none;
+  -webkit-user-select: none;
+}
+.hero-headline .line {
+  display: block;
+}
+.hero-headline .line span {
+  display: inline-block;
+}
+.hero-headline .line:nth-child(2) { color: var(--clay); }
+
+.hero-copy p {
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+  max-width: 44ch;
+  margin-bottom: 36px;
+}
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 17px 34px;
+  border-radius: 2px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  will-change: transform;
+}
+.btn-primary {
+  background: var(--clay);
+  color: var(--bone);
+  box-shadow: var(--shadow-soft);
+}
+.btn-primary:hover, .btn-primary:focus-visible { background: var(--clay-deep); }
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--espresso);
+  color: var(--espresso);
+}
+.btn-ghost:hover, .btn-ghost:focus-visible { background: var(--espresso); color: var(--bone); }
+
+.hero-ratings {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.hero-ratings .stars { color: var(--gold); letter-spacing: 2px; }
+.hero-ratings strong { color: var(--espresso); font-weight: 600; }
+
+.hero-media {
+  position: relative;
+  height: 640px;
+}
+.hero-media .arch-frame {
+  position: absolute;
+  top: 0; right: 0;
+  width: 78%;
+  height: 100%;
+  border-radius: 200px 200px 2px 2px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+}
+.hero-media .arch-frame img { width: 100%; height: 100%; object-fit: cover; }
+.hero-media .detail-frame {
+  position: absolute;
+  bottom: -8%;
+  left: -6%;
+  width: 44%;
+  aspect-ratio: 1 / 1;
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  border: 6px solid var(--bone);
+}
+.hero-media .detail-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ======================================================================
+   8. INTRO / "THE STUDIO"
+   ====================================================================== */
+.intro { padding: 140px 0; }
+.intro .wrap {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 80px;
+  align-items: start;
+}
+.intro-facts { display: flex; flex-direction: column; }
+.intro-fact {
+  padding: 26px 0;
+  border-top: 1px solid var(--linen);
+}
+.intro-fact:last-child { border-bottom: 1px solid var(--linen); }
+.intro-fact h3 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 21px;
+  color: var(--espresso);
+}
+
+/* ======================================================================
+   9. SERVICES
+   ====================================================================== */
+.services { padding: 140px 0 160px; }
+.services-head { margin-bottom: 70px; max-width: 640px; }
+.service-list { position: relative; }
+.service-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 70px 1fr 1fr;
+  align-items: center;
+  gap: 24px;
+  padding: 34px 24px;
+  border-top: 1px solid var(--linen);
+  overflow: hidden;
+  transition: color 0.3s ease;
+}
+.service-row:last-child { border-bottom: 1px solid var(--linen); }
+.service-row::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--sand);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+  z-index: 0;
+}
+.service-row:hover::before, .service-row:focus-within::before { transform: scaleX(1); }
+.service-num, .service-name, .service-desc {
+  position: relative;
+  z-index: 1;
+}
+.service-num {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--clay);
+}
+.service-name {
+  font-family: var(--serif);
+  font-size: clamp(1.4rem, 2.6vw, 2.2rem);
+  font-weight: 400;
+  color: var(--espresso);
+  transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.service-row:hover .service-name, .service-row:focus-within .service-name { transform: translateX(12px); }
+.service-desc {
+  font-size: 15px;
+  color: var(--ink-soft);
+  max-width: 46ch;
+  justify-self: end;
+  text-align: right;
+}
+.service-thumb {
+  position: fixed;
+  top: 0; left: 0;
+  width: 220px;
+  height: 150px;
+  border-radius: 2px;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 400;
+  box-shadow: var(--shadow-soft);
+  transition: opacity 0.25s ease;
+}
+.service-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.service-thumb.visible { opacity: 1; }
+.service-thumb-static {
+  display: none;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 16px;
+  grid-column: 1 / -1;
+}
+.service-thumb-static img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ======================================================================
+   10. GALLERY
+   ====================================================================== */
+.gallery { padding: 140px 0; }
+.gallery-head { margin-bottom: 60px; max-width: 640px; }
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-auto-rows: 90px;
+  gap: 18px;
+}
+.gallery-item {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 2px;
+  border: none;
+  padding: 0;
+  background: var(--sand);
+  box-shadow: var(--shadow-soft);
+}
+/* The reveal clip-path lives on this inner wrapper, never on .gallery-item
+   itself — a clipped target reports zero intersection ratio in some
+   browsers, which would permanently deadlock the IntersectionObserver
+   reveal below (it can never see the item as "in view"). */
+.gallery-clip { display: block; width: 100%; height: 100%; }
+.js-enabled .gallery-clip { clip-path: inset(0 100% 0 0); }
+.gallery-item img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.gallery-item:hover img, .gallery-item:focus-visible img { transform: scale(1.06); }
+.gallery-item::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(42,33,28,0.08);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.gallery-item:hover::after, .gallery-item:focus-visible::after { opacity: 1; }
+.g1 { grid-column: 1 / 3; grid-row: 1 / 6; }
+.g2 { grid-column: 3 / 5; grid-row: 1 / 4; }
+.g3 { grid-column: 5 / 7; grid-row: 1 / 3; }
+.g4 { grid-column: 3 / 4; grid-row: 4 / 8; }
+.g5 { grid-column: 4 / 5; grid-row: 4 / 8; }
+.g6 { grid-column: 5 / 7; grid-row: 3 / 6; }
+.g7 { grid-column: 1 / 3; grid-row: 6 / 10; }
+.g8 { grid-column: 5 / 7; grid-row: 6 / 9; }
+
+/* ======================================================================
+   11. REVIEWS
+   ====================================================================== */
+.reviews {
+  background: var(--espresso);
+  color: var(--bone);
+  padding: 150px 0;
+  overflow: hidden;
+}
+.reviews .eyebrow { color: var(--clay); }
+.reviews .eyebrow::before { background: var(--clay); }
+.reviews h2.section-heading { color: var(--bone); }
+.reviews-ratings {
+  display: flex;
+  gap: 40px;
+  margin: 20px 0 60px;
+  flex-wrap: wrap;
+}
+.rating-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.rating-stat .num {
+  font-family: var(--serif);
+  font-size: 2.4rem;
+  color: var(--bone);
+}
+.rating-stat .stars { color: var(--gold); letter-spacing: 3px; }
+.rating-stat .src { font-size: 13px; color: rgba(248,244,238,0.6); }
+
+.slider {
+  position: relative;
+  max-width: 880px;
+  min-height: 260px;
+}
+.slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s ease;
+}
+.slide.active { opacity: 1; visibility: visible; position: relative; }
+.slide .quote-mark {
+  position: absolute;
+  top: -60px; left: -20px;
+  font-family: var(--serif);
+  font-size: 220px;
+  color: var(--clay);
+  opacity: 0.16;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+.slide blockquote {
+  position: relative;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 3vw, 2.3rem);
+  line-height: 1.35;
+  color: var(--bone);
+  margin: 0 0 28px;
+}
+.slide cite {
+  position: relative;
+  display: block;
+  font-style: normal;
+  font-size: 14px;
+  color: var(--clay);
+  letter-spacing: 0.05em;
+}
+.slider-dots {
+  display: flex;
+  gap: 12px;
+  margin-top: 50px;
+}
+.slider-dots button {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  border: 1px solid rgba(248,244,238,0.4);
+  background: transparent;
+  padding: 0;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+.slider-dots button.active { background: var(--clay); border-color: var(--clay); }
+
+/* ======================================================================
+   12. VISIT
+   ====================================================================== */
+.visit { padding: 150px 0; }
+.visit .wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+.visit-address {
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--espresso);
+  margin-bottom: 8px;
+}
+.visit-phone {
+  display: inline-block;
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  color: var(--clay-deep);
+  margin: 6px 0 24px;
+}
+.visit-directions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--clay-deep);
+  border-bottom: 1px solid var(--clay);
+  padding-bottom: 3px;
+  margin-bottom: 44px;
+}
+.hours-table { width: 100%; border-collapse: collapse; margin-bottom: 28px; }
+.hours-table td {
+  padding: 12px 0;
+  border-top: 1px solid var(--linen);
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+.hours-table tr:last-child td { border-bottom: 1px solid var(--linen); }
+.hours-table td:first-child { color: var(--espresso); font-weight: 500; }
+.hours-table td:last-child { text-align: right; color: var(--ink-soft); }
+.hours-table tr.today td { color: var(--espresso); font-weight: 600; }
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 2px;
+  background: var(--sand);
+}
+.status-pill .dot { width: 7px; height: 7px; border-radius: 50%; }
+.status-pill.open { color: #3E6B4A; }
+.status-pill.open .dot { background: #3E6B4A; }
+.status-pill.closed { color: var(--clay-deep); }
+.status-pill.closed .dot { background: var(--clay-deep); }
+
+.map-block {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  background: var(--sand);
+  border: 1px solid var(--linen);
+  border-radius: 2px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.map-block iframe { width: 100%; height: 100%; border: 0; display: block; }
+.map-block .map-caption {
+  position: absolute;
+  top: 22px; left: 22px; right: 22px;
+  font-size: 13px;
+  color: var(--ink-soft);
+  background: var(--bone);
+  padding: 10px 14px;
+  border-radius: 2px;
+  border: 1px solid var(--linen);
+  pointer-events: none;
+}
+/*
+  MAP EMBED — this uses Google's keyless embed ("output=embed"), which
+  needs no API key or billing account. If you'd rather use the official
+  Maps Embed API (more reliable long-term, requires a key and billing),
+  swap the iframe's src for:
+
+  https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=9620+Elbow+Drive+SW,+Calgary,+AB+T2V+1M2
+*/
+
+/* ======================================================================
+   13. CLOSING CTA
+   ====================================================================== */
+.closing-cta {
+  background: var(--espresso);
+  color: var(--bone);
+  text-align: center;
+  padding: 170px 0;
+}
+.closing-cta p {
+  font-family: var(--sans);
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(248,244,238,0.65);
+  margin-bottom: 26px;
+}
+.closing-cta a.phone-big {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(2.6rem, 9vw, 6.5rem);
+  color: var(--bone);
+  letter-spacing: -0.02em;
+  transition: color 0.3s ease;
+}
+.closing-cta a.phone-big:hover, .closing-cta a.phone-big:focus-visible { color: var(--clay); }
+
+/* ======================================================================
+   14. FOOTER
+   ====================================================================== */
+.site-footer {
+  background: var(--espresso);
+  color: rgba(248,244,238,0.7);
+  padding: 60px 0 40px;
+  border-top: 1px solid rgba(248,244,238,0.12);
+}
+.site-footer .wrap {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+.footer-name {
+  font-family: var(--serif);
+  font-size: 20px;
+  color: var(--bone);
+  margin-bottom: 10px;
+}
+.footer-block { font-size: 14px; line-height: 1.8; }
+.footer-credit {
+  margin-top: 40px;
+  font-size: 12px;
+  color: rgba(248,244,238,0.4);
+  text-align: center;
+}
+
+/* ======================================================================
+   15. LIGHTBOX
+   ====================================================================== */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 800;
+  background: rgba(42,33,28,0.94);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 6vw;
+}
+.lightbox.open { display: flex; }
+.lightbox img {
+  max-width: 100%;
+  max-height: 84vh;
+  border-radius: 2px;
+  box-shadow: 0 40px 100px -20px rgba(0,0,0,0.6);
+}
+.lightbox-close, .lightbox-prev, .lightbox-next {
+  position: absolute;
+  background: transparent;
+  border: 1px solid rgba(248,244,238,0.3);
+  color: var(--bone);
+  border-radius: 50%;
+  width: 44px; height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+.lightbox-close:hover, .lightbox-prev:hover, .lightbox-next:hover,
+.lightbox-close:focus-visible, .lightbox-prev:focus-visible, .lightbox-next:focus-visible {
+  background: rgba(248,244,238,0.12); border-color: var(--bone);
+}
+.lightbox-close { top: 26px; right: 26px; }
+.lightbox-prev { left: 26px; top: 50%; transform: translateY(-50%); }
+.lightbox-next { right: 26px; top: 50%; transform: translateY(-50%); }
+
+/* ======================================================================
+   16. CUSTOM CURSOR (desktop only, see JS touch-detection)
+   ====================================================================== */
+.cursor-dot, .cursor-ring {
+  position: fixed;
+  top: 0; left: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+}
+.cursor-dot { width: 7px; height: 7px; background: var(--clay); }
+.cursor-ring {
+  width: 34px; height: 34px;
+  border: 1px solid var(--clay);
+  transition: width 0.25s ease, height 0.25s ease, opacity 0.25s ease;
+}
+.cursor-ring.hovering { width: 56px; height: 56px; }
+body.cursor-active { cursor: none; }
+body.cursor-active a, body.cursor-active button { cursor: none; }
+.cursor-hide { opacity: 0; }
+
+/* ======================================================================
+   17. FOCUS STATES
+   ====================================================================== */
+a:focus-visible, button:focus-visible {
+  outline: 2px solid var(--clay);
+  outline-offset: 3px;
+}
+
+/* ======================================================================
+   18. RESPONSIVE
+   ====================================================================== */
+@media (max-width: 1024px) {
+  .hero .wrap { grid-template-columns: 1fr; }
+  .hero-media { height: 420px; margin-top: 40px; order: 2; }
+  .intro .wrap { grid-template-columns: 1fr; gap: 50px; }
+  .visit .wrap { grid-template-columns: 1fr; gap: 60px; }
+  .gallery-grid { grid-auto-rows: 70px; }
+}
+@media (min-width: 769px) {
+  .nav-toggle, .mobile-menu { display: none; }
+}
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav-call { display: none; }
+  .nav-toggle { display: block; }
+  .hero { padding-top: calc(var(--nav-h) + 20px); }
+  .hero-headline { font-size: clamp(2.6rem, 13vw, 4.2rem); }
+  .service-row { grid-template-columns: 40px 1fr; }
+  .service-desc { display: none; }
+  .service-thumb-static { display: block; }
+  .service-thumb { display: none; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 160px; }
+  .g1,.g2,.g3,.g4,.g5,.g6,.g7,.g8 { grid-column: auto; grid-row: span 2; }
+  .reviews-ratings { gap: 24px; }
+  .cursor-dot, .cursor-ring { display: none; }
+  body.cursor-active { cursor: auto; }
+  body.cursor-active a, body.cursor-active button { cursor: pointer; }
+}
+@media (max-width: 480px) {
+  .wrap { padding: 0 22px; }
+  .hero-actions { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .closing-cta { padding: 110px 0; }
+  .footer-block:last-child { text-align: left; }
+}
+
+/* ======================================================================
+   19. REDUCED MOTION
+   ====================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+  [data-animate] { opacity: 1 !important; transform: none !important; }
+  .hairline { transform: scaleX(1) !important; }
+  .gallery-clip { clip-path: none !important; }
+  .cursor-dot, .cursor-ring { display: none !important; }
+  body.cursor-active { cursor: auto !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor-dot" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"></div>
+
+<header class="nav" id="siteNav">
+  <div class="nav-inner">
+    <a href="#top" class="nav-logo">Just Barb's</a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#services">Services</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#visit">Visit</a>
+    </nav>
+    <a href="tel:+14032555622" class="nav-call">Call (403) 255-5622</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+<!--
+  Deliberately a sibling of <header>, not nested inside it: header.nav
+  gets backdrop-filter once scrolled, which would create a new containing
+  block for this element's position:fixed and collapse it into the
+  header's own box instead of covering the full viewport.
+-->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#services">Services</a>
+  <a href="#gallery">Gallery</a>
+  <a href="#reviews">Reviews</a>
+  <a href="#visit">Visit</a>
+  <a href="tel:+14032555622" class="mobile-menu-call">Call (403) 255-5622</a>
+</div>
+
+<main id="top">
+
+  <!-- ============================== HERO ============================== -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-copy">
+        <p class="eyebrow">Southwest Calgary · Since Barb opened her chair</p>
+        <h1 class="hero-headline">
+          <span class="line"><span>Your hair,</span></span>
+          <span class="line"><span>cut exactly</span></span>
+          <span class="line"><span>the way you asked.</span></span>
+        </h1>
+        <p>One chair, one stylist, and a studio on Elbow Drive where nobody's trying to sell you a fourth product you didn't ask for. Just a good, exact haircut, done by Barb, every time.</p>
+        <div class="hero-actions">
+          <a href="tel:+14032555622" class="btn btn-primary magnetic">Call to book</a>
+          <a href="#gallery" class="btn btn-ghost magnetic">See the work</a>
+        </div>
+        <div class="hero-ratings">
+          <span class="stars">★★★★★</span>
+          <span><strong class="count-up" data-target="4.8">0.0</strong> on Google · <strong class="count-up" data-target="5.0">0.0</strong> on Yelp</span>
+        </div>
+      </div>
+      <div class="hero-media">
+        <div class="arch-frame parallax" data-speed="-12">
+          <img src="hero-studio.jpg" data-name="hero-studio.jpg" width="900" height="1200" alt="Interior of Just Barb's Hair Studio, showing the styling chair and mirror" onerror="phFallback(this)">
+        </div>
+        <div class="detail-frame parallax" data-speed="-22">
+          <img src="hero-detail.jpg" data-name="hero-detail.jpg" width="600" height="600" alt="Close detail of the styling station at Just Barb's Hair Studio" onerror="phFallback(this)">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== INTRO ============================== -->
+  <section class="intro bg-sand" id="studio">
+    <div class="wrap">
+      <div class="intro-copy">
+        <p class="eyebrow" data-animate>The studio</p>
+        <h2 class="section-heading split-chars" data-animate>The studio</h2>
+        <p class="section-body" data-animate style="margin-top: 26px;">Just Barb's is one chair, one stylist, and a room that smells like a proper salon should. You book with Barb and you see Barb — not whoever's free that day. There's a shelf of the products she actually trusts, Moroccanoil and Verb among them, and a corner with toys and books for the kids who come in with their parents, or on their own. It's the kind of place a neighbourhood in Haysboro is lucky to still have: unhurried, exact, and honest about what your hair actually needs.</p>
+      </div>
+      <div class="intro-facts">
+        <div class="intro-fact hairline-wrap">
+          <div class="hairline" data-animate></div>
+          <h3 data-animate>One stylist, one chair</h3>
+        </div>
+        <div class="intro-fact hairline-wrap">
+          <div class="hairline" data-animate></div>
+          <h3 data-animate>Kids welcome — toys and books on hand</h3>
+        </div>
+        <div class="intro-fact hairline-wrap">
+          <div class="hairline" data-animate></div>
+          <h3 data-animate>Moroccanoil, Verb and other pro products in stock</h3>
+          <div class="hairline" data-animate style="margin-top: 26px;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== SERVICES ============================== -->
+  <section class="services bg-bone" id="services">
+    <div class="wrap">
+      <div class="services-head">
+        <p class="eyebrow" data-animate>What Barb does</p>
+        <h2 class="section-heading" data-animate>The work</h2>
+      </div>
+      <div class="service-list">
+        <div class="service-row" data-thumb="service-cuts.jpg" data-thumb-alt="Finished haircut at Just Barb's Hair Studio">
+          <span class="service-num" data-animate>01</span>
+          <span class="service-name" data-animate>Cuts</span>
+          <span class="service-desc" data-animate>Women's, men's — precise, considered, and cut to how your hair actually falls.</span>
+          <figure class="service-thumb-static">
+            <img src="service-cuts.jpg" data-name="service-cuts.jpg" width="480" height="360" alt="Finished haircut at Just Barb's Hair Studio" loading="lazy" decoding="async" onerror="phFallback(this)">
+          </figure>
+        </div>
+        <div class="service-row" data-thumb="service-colour.jpg" data-thumb-alt="Colour and highlight work at Just Barb's Hair Studio">
+          <span class="service-num" data-animate>02</span>
+          <span class="service-name" data-animate>Colour &amp; Highlights</span>
+          <span class="service-desc" data-animate>Full colour and hand-placed highlights, matched to what suits you, not a trend.</span>
+          <figure class="service-thumb-static">
+            <img src="service-colour.jpg" data-name="service-colour.jpg" width="480" height="360" alt="Colour and highlight work at Just Barb's Hair Studio" loading="lazy" decoding="async" onerror="phFallback(this)">
+          </figure>
+        </div>
+        <div class="service-row" data-thumb="service-balayage.jpg" data-thumb-alt="Balayage and toning result at Just Barb's Hair Studio">
+          <span class="service-num" data-animate>03</span>
+          <span class="service-name" data-animate>Balayage &amp; Toning</span>
+          <span class="service-desc" data-animate>Streaking and toning for soft, grown-out colour that still looks intentional.</span>
+          <figure class="service-thumb-static">
+            <img src="service-balayage.jpg" data-name="service-balayage.jpg" width="480" height="360" alt="Balayage and toning result at Just Barb's Hair Studio" loading="lazy" decoding="async" onerror="phFallback(this)">
+          </figure>
+        </div>
+        <div class="service-row" data-thumb="service-kids.jpg" data-thumb-alt="Kid-friendly haircut corner at Just Barb's Hair Studio">
+          <span class="service-num" data-animate>04</span>
+          <span class="service-name" data-animate>Kids' Cuts</span>
+          <span class="service-desc" data-animate>Patient, relaxed cuts for kids — with toys and books to keep them settled.</span>
+          <figure class="service-thumb-static">
+            <img src="service-kids.jpg" data-name="service-kids.jpg" width="480" height="360" alt="Kid-friendly haircut corner at Just Barb's Hair Studio" loading="lazy" decoding="async" onerror="phFallback(this)">
+          </figure>
+        </div>
+        <div class="service-row" data-thumb="service-styling.jpg" data-thumb-alt="Blowout and styling result at Just Barb's Hair Studio">
+          <span class="service-num" data-animate>05</span>
+          <span class="service-name" data-animate>Blowouts &amp; Styling</span>
+          <span class="service-desc" data-animate>A proper blowout or finished style for whatever's next on your calendar.</span>
+          <figure class="service-thumb-static">
+            <img src="service-styling.jpg" data-name="service-styling.jpg" width="480" height="360" alt="Blowout and styling result at Just Barb's Hair Studio" loading="lazy" decoding="async" onerror="phFallback(this)">
+          </figure>
+        </div>
+        <div class="service-row" data-thumb="service-products.jpg" data-thumb-alt="Retail product shelf at Just Barb's Hair Studio">
+          <span class="service-num" data-animate>06</span>
+          <span class="service-name" data-animate>Treatments &amp; Products</span>
+          <span class="service-desc" data-animate>Deep-conditioning treatments, plus Moroccanoil, Verb and other pro products to take home.</span>
+          <figure class="service-thumb-static">
+            <img src="service-products.jpg" data-name="service-products.jpg" width="480" height="360" alt="Retail product shelf at Just Barb's Hair Studio" loading="lazy" decoding="async" onerror="phFallback(this)">
+          </figure>
+        </div>
+      </div>
+    </div>
+    <div class="service-thumb" id="serviceThumb" aria-hidden="true">
+      <img id="serviceThumbImg" src="" alt="">
+    </div>
+  </section>
+
+  <!-- ============================== GALLERY ============================== -->
+  <section class="gallery bg-sand" id="gallery">
+    <div class="wrap">
+      <div class="gallery-head">
+        <p class="eyebrow" data-animate>A look inside</p>
+        <h2 class="section-heading" data-animate>Gallery</h2>
+      </div>
+      <div class="gallery-grid">
+        <button class="gallery-item g1 parallax-gallery" data-speed="-8" data-index="0">
+          <span class="gallery-clip"><img src="gallery-01.jpg" data-name="gallery-01.jpg" width="600" height="800" alt="Wide view of the studio interior" loading="lazy" decoding="async" onerror="phFallback(this)"></span>
+        </button>
+        <button class="gallery-item g2 parallax-gallery" data-speed="-8" data-index="1">
+          <span class="gallery-clip"><img src="gallery-02.jpg" data-name="gallery-02.jpg" width="600" height="600" alt="A finished haircut" loading="lazy" decoding="async" onerror="phFallback(this)"></span>
+        </button>
+        <button class="gallery-item g3 parallax-gallery" data-speed="-8" data-index="2">
+          <span class="gallery-clip"><img src="gallery-03.jpg" data-name="gallery-03.jpg" width="800" height="550" alt="Styling station detail" loading="lazy" decoding="async" onerror="phFallback(this)"></span>
+        </button>
+        <button class="gallery-item g4 parallax-gallery" data-speed="-8" data-index="3">
+          <span class="gallery-clip"><img src="gallery-04.jpg" data-name="gallery-04.jpg" width="600" height="800" alt="Colour work close-up" loading="lazy" decoding="async" onerror="phFallback(this)"></span>
+        </button>
+        <button class="gallery-item g5 parallax-gallery" data-speed="-8" data-index="4">
+          <span class="gallery-clip"><img src="gallery-05.jpg" data-name="gallery-05.jpg" width="600" height="600" alt="Retail product shelf" loading="lazy" decoding="async" onerror="phFallback(this)"></span>
+        </button>
+        <button class="gallery-item g6 parallax-gallery" data-speed="-8" data-index="5">
+          <span class="gallery-clip"><img src="gallery-06.jpg" data-name="gallery-06.jpg" width="800" height="550" alt="The styling chair and mirror" loading="lazy" decoding="async" onerror="phFallback(this)"></span>
+        </button>
+        <button class="gallery-item g7 parallax-gallery" data-speed="-8" data-index="6">
+          <span class="gallery-clip"><img src="gallery-07.jpg" data-name="gallery-07.jpg" width="600" height="800" alt="Balayage result" loading="lazy" decoding="async" onerror="phFallback(this)"></span>
+        </button>
+        <button class="gallery-item g8 parallax-gallery" data-speed="-8" data-index="7">
+          <span class="gallery-clip"><img src="gallery-08.jpg" data-name="gallery-08.jpg" width="600" height="600" alt="The studio's kid corner with toys and books" loading="lazy" decoding="async" onerror="phFallback(this)"></span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== REVIEWS ============================== -->
+  <section class="reviews" id="reviews">
+    <div class="wrap">
+      <p class="eyebrow" data-animate>What people say</p>
+      <h2 class="section-heading" data-animate>Reviews</h2>
+      <div class="reviews-ratings" data-animate>
+        <div class="rating-stat">
+          <span class="num">4.8★</span>
+          <span class="stars">★★★★★</span>
+          <span class="src">Google · 8 reviews</span>
+        </div>
+        <div class="rating-stat">
+          <span class="num">5.0★</span>
+          <span class="stars">★★★★★</span>
+          <span class="src">Yelp · 4 reviews</span>
+        </div>
+      </div>
+      <div class="slider" id="reviewSlider" aria-live="polite">
+        <div class="slide active" data-index="0">
+          <span class="quote-mark" aria-hidden="true">&#8220;</span>
+          <blockquote>Barb is very friendly and accommodating. She does great work with colour and cuts. There is a nice selection of product and a friendly environment. She has experience with all kinds of people and hair styles. There are even some toys and books for children. I am always very happy with her service.</blockquote>
+          <cite>— Aryana D., Google, 5★</cite>
+        </div>
+        <div class="slide" data-index="1">
+          <span class="quote-mark" aria-hidden="true">&#8220;</span>
+          <blockquote>I needed major hair help and decided to try the closest salon to me, Just Barb's. She did an amazing job. My hair looks best ever. She streaked and toned it.</blockquote>
+          <cite>— Yelp review, 5★</cite>
+        </div>
+        <div class="slide" data-index="2">
+          <span class="quote-mark" aria-hidden="true">&#8220;</span>
+          <blockquote>Very good and exact hair cut. Very reasonable price. Nothing fancy. No upsale, no games. Just a good and exact hair cut.</blockquote>
+          <cite>— Ellie S., Google, 5★</cite>
+        </div>
+        <div class="slider-dots" id="sliderDots" role="tablist" aria-label="Review slides">
+          <button class="active" role="tab" aria-selected="true" aria-label="Review 1" data-go="0"></button>
+          <button role="tab" aria-selected="false" aria-label="Review 2" data-go="1"></button>
+          <button role="tab" aria-selected="false" aria-label="Review 3" data-go="2"></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== VISIT ============================== -->
+  <section class="visit bg-bone" id="visit">
+    <div class="wrap">
+      <div class="visit-info">
+        <p class="eyebrow" data-animate>Find the studio</p>
+        <h2 class="section-heading" data-animate>Visit</h2>
+        <p class="visit-address" data-animate style="margin-top: 30px;">9620 Elbow Drive SW<br>Calgary, AB T2V 1M2</p>
+        <a href="tel:+14032555622" class="visit-phone" data-animate>(403) 255-5622</a><br>
+        <a href="https://www.google.com/maps/search/?api=1&query=9620+Elbow+Drive+SW,+Calgary,+AB+T2V+1M2" target="_blank" rel="noopener" class="visit-directions" data-animate>Get directions →</a>
+
+        <table class="hours-table" data-animate aria-label="Weekly hours">
+          <!--
+            HOURS — edit this table's rows (and the matching JS object
+            further down, id="hoursData") to correct Just Barb's actual
+            weekly hours. Both must be updated together.
+          -->
+          <tbody id="hoursTableBody">
+            <tr><td>Monday</td><td>9:00 AM – 7:00 PM</td></tr>
+            <tr><td>Tuesday</td><td>9:00 AM – 7:00 PM</td></tr>
+            <tr><td>Wednesday</td><td>9:00 AM – 7:00 PM</td></tr>
+            <tr><td>Thursday</td><td>9:00 AM – 7:00 PM</td></tr>
+            <tr><td>Friday</td><td>9:00 AM – 7:00 PM</td></tr>
+            <tr><td>Saturday</td><td>9:00 AM – 5:00 PM</td></tr>
+            <tr><td>Sunday</td><td>Closed</td></tr>
+          </tbody>
+        </table>
+        <span class="status-pill" id="statusPill" data-animate><span class="dot"></span><span id="statusText">Checking hours…</span></span>
+      </div>
+      <div class="map-block" data-animate>
+        <!-- See the CSS comment above .map-block for how to switch to a keyed Maps Embed API URL. -->
+        <iframe
+          src="https://www.google.com/maps?q=Just+Barb%27s+Hair+Studio,9620+Elbow+Drive+SW,+Calgary,+AB+T2V+1M2&output=embed"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Map to Just Barb's Hair Studio, 9620 Elbow Drive SW, Calgary"></iframe>
+        <div class="map-caption">9620 Elbow Drive SW — near Heritage, Haysboro</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== CLOSING CTA ============================== -->
+  <section class="closing-cta">
+    <p data-animate>Call Barb. She'll book you in.</p>
+    <a href="tel:+14032555622" class="phone-big magnetic" data-animate>(403) 255-5622</a>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-block">
+      <p class="footer-name">Just Barb's Hair Studio</p>
+      <p>9620 Elbow Drive SW<br>Calgary, AB T2V 1M2</p>
+    </div>
+    <div class="footer-block">
+      <p><a href="tel:+14032555622">(403) 255-5622</a></p>
+      <p>Mon–Fri 9–7 · Sat 9–5 · Sun closed</p>
+    </div>
+  </div>
+  <p class="footer-credit">© <span id="year"></span> Just Barb's Hair Studio. Southwest Calgary.</p>
+</footer>
+
+<!-- ============================== LIGHTBOX ============================== -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer" aria-hidden="true">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close image viewer">✕</button>
+  <button class="lightbox-prev" id="lightboxPrev" aria-label="Previous image">‹</button>
+  <img id="lightboxImg" src="" alt="">
+  <button class="lightbox-next" id="lightboxNext" aria-label="Next image">›</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+<script>
+/* ==========================================================================
+   1. GLOBAL STATE
+   ========================================================================== */
+var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+var hasGSAP = typeof gsap !== 'undefined';
+if (hasGSAP && typeof ScrollTrigger !== 'undefined') gsap.registerPlugin(ScrollTrigger);
+if (hasGSAP && typeof ScrollToPlugin !== 'undefined') gsap.registerPlugin(ScrollToPlugin);
+
+/* ==========================================================================
+   2. FOOTER YEAR
+   ========================================================================== */
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ==========================================================================
+   3. HOURS — computed live.
+   OWNER: correct Barb's real weekly hours here (0 = Sunday … 6 = Saturday).
+   Keep this in sync with the #hoursTableBody rows in the HTML above.
+   ========================================================================== */
+var hoursData = { // <-- id="hoursData" reference for the HTML comment above
+  0: null,               // Sunday — closed
+  1: [9 * 60, 19 * 60],   // Monday    9:00 AM – 7:00 PM
+  2: [9 * 60, 19 * 60],   // Tuesday   9:00 AM – 7:00 PM
+  3: [9 * 60, 19 * 60],   // Wednesday 9:00 AM – 7:00 PM
+  4: [9 * 60, 19 * 60],   // Thursday  9:00 AM – 7:00 PM
+  5: [9 * 60, 19 * 60],   // Friday    9:00 AM – 7:00 PM
+  6: [9 * 60, 17 * 60],   // Saturday  9:00 AM – 5:00 PM
+};
+var dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+function fmtTime(mins) {
+  var h = Math.floor(mins / 60), m = mins % 60;
+  var period = h >= 12 ? 'PM' : 'AM';
+  var h12 = h % 12 === 0 ? 12 : h % 12;
+  return h12 + (m ? ':' + String(m).padStart(2, '0') : ':00') + ' ' + period;
+}
+
+function updateHoursStatus() {
+  var now = new Date();
+  var day = now.getDay();
+  var mins = now.getHours() * 60 + now.getMinutes();
+  var todayRange = hoursData[day];
+  var pill = document.getElementById('statusPill');
+  var text = document.getElementById('statusText');
+  if (!pill || !text) return;
+
+  if (todayRange && mins >= todayRange[0] && mins < todayRange[1]) {
+    pill.className = 'status-pill open';
+    text.textContent = 'Open now · closes ' + fmtTime(todayRange[1]);
+  } else {
+    // find next open day
+    for (var i = 1; i <= 7; i++) {
+      var d = (day + i) % 7;
+      var range = hoursData[d];
+      if (range) {
+        pill.className = 'status-pill closed';
+        text.textContent = 'Closed · opens ' + (i === 1 ? 'tomorrow' : dayNames[d]) + ' at ' + fmtTime(range[0]);
+        break;
+      }
+    }
+  }
+
+  var rows = document.querySelectorAll('#hoursTableBody tr');
+  rows.forEach(function (row, idx) {
+    var rowDay = (idx + 1) % 7; // table starts Monday
+    row.classList.toggle('today', rowDay === day);
+  });
+}
+updateHoursStatus();
+setInterval(updateHoursStatus, 60000);
+
+/* ==========================================================================
+   4. NAV — scroll state + mobile menu
+   ========================================================================== */
+var nav = document.getElementById('siteNav');
+function handleNavScroll() {
+  nav.classList.toggle('scrolled', window.scrollY > 80);
+}
+handleNavScroll();
+window.addEventListener('scroll', handleNavScroll, { passive: true });
+
+var navToggle = document.getElementById('navToggle');
+var mobileMenu = document.getElementById('mobileMenu');
+function closeMobileMenu() {
+  mobileMenu.classList.remove('open');
+  navToggle.setAttribute('aria-expanded', 'false');
+}
+function toggleMobileMenu() {
+  var open = mobileMenu.classList.toggle('open');
+  navToggle.setAttribute('aria-expanded', String(open));
+}
+navToggle.addEventListener('click', toggleMobileMenu);
+mobileMenu.querySelectorAll('a').forEach(function (a) {
+  a.addEventListener('click', closeMobileMenu);
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && mobileMenu.classList.contains('open')) closeMobileMenu();
+});
+
+/* ==========================================================================
+   5. SMOOTH ANCHOR SCROLL
+   ========================================================================== */
+document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+  link.addEventListener('click', function (e) {
+    var id = link.getAttribute('href');
+    if (id.length < 2) return;
+    var target = document.querySelector(id);
+    if (!target) return;
+    e.preventDefault();
+    var y = target.getBoundingClientRect().top + window.scrollY - 70;
+    if (hasGSAP && !reduceMotion) {
+      gsap.to(window, { duration: 1.1, scrollTo: y, ease: 'power3.inOut' });
+    } else {
+      window.scrollTo({ top: y, behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+  });
+});
+
+/* ==========================================================================
+   6. LOAD FALLBACK
+   The hero itself no longer has a page-load animation — it renders
+   immediately, so there's nothing there to keep in sync. This just
+   backstops any [data-animate] element elsewhere on the page in case
+   GSAP fails to load.
+   ========================================================================== */
+function gsapFallbackShow() {
+  document.querySelectorAll('[data-animate]').forEach(function (el) { el.style.opacity = 1; });
+}
+
+/* ==========================================================================
+   7. SCROLL REVEALS (staggered children per section)
+   ========================================================================== */
+function initScrollReveals() {
+  if (!hasGSAP || reduceMotion) { gsapFallbackShow(); return; }
+
+  gsap.set('[data-animate]', { y: 40 });
+
+  var sections = document.querySelectorAll('main section, footer');
+  sections.forEach(function (section) {
+    var els = section.querySelectorAll('[data-animate]');
+    if (!els.length || section.closest('.hero')) return;
+    ScrollTrigger.create({
+      trigger: section,
+      start: 'top 78%',
+      once: true,
+      onEnter: function () {
+        gsap.to(els, { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out', stagger: 0.08 });
+      }
+    });
+  });
+
+  // hairline draws
+  document.querySelectorAll('.hairline').forEach(function (line) {
+    ScrollTrigger.create({
+      trigger: line,
+      start: 'top 90%',
+      once: true,
+      onEnter: function () {
+        gsap.to(line, { scaleX: 1, duration: 0.7, ease: 'power3.out' });
+      }
+    });
+  });
+
+}
+
+/* eyebrow underline draw (separate lightweight pass since ::before can't be
+   targeted by gsap directly — animate a CSS var-driven transform instead) */
+(function eyebrowRuleDraw() {
+  var style = document.createElement('style');
+  style.textContent = '.eyebrow.rule-in::before { transition: transform 0.7s cubic-bezier(0.22,1,0.36,1); transform: scaleX(1) !important; }';
+  document.head.appendChild(style);
+  if (!('IntersectionObserver' in window) || reduceMotion) {
+    document.querySelectorAll('.eyebrow').forEach(function (e) { e.classList.add('rule-in'); });
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('rule-in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.4 });
+  document.querySelectorAll('.eyebrow').forEach(function (e) { io.observe(e); });
+})();
+
+/* ==========================================================================
+   8. SPLIT-CHARACTER HEADLINE REVEAL ("The studio" / "The work")
+   ========================================================================== */
+function splitChars(el) {
+  var text = el.textContent;
+  el.textContent = '';
+  var frag = document.createDocumentFragment();
+  text.split('').forEach(function (ch) {
+    var span = document.createElement('span');
+    span.textContent = ch === ' ' ? ' ' : ch;
+    span.style.display = 'inline-block';
+    frag.appendChild(span);
+  });
+  el.appendChild(frag);
+  return el.querySelectorAll('span');
+}
+
+function initSplitHeadlines() {
+  document.querySelectorAll('.split-chars').forEach(function (heading) {
+    if (reduceMotion || !hasGSAP) return;
+    var chars = splitChars(heading);
+    gsap.set(chars, { opacity: 0, y: 24 });
+    ScrollTrigger.create({
+      trigger: heading,
+      start: 'top 82%',
+      once: true,
+      onEnter: function () {
+        gsap.to(chars, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.022 });
+      }
+    });
+  });
+}
+
+/* ==========================================================================
+   9. PARALLAX
+   ========================================================================== */
+function initParallax() {
+  if (!hasGSAP || reduceMotion) return;
+  document.querySelectorAll('.parallax').forEach(function (el) {
+    var speed = parseFloat(el.dataset.speed) || -10;
+    gsap.to(el, {
+      yPercent: speed,
+      ease: 'none',
+      scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true }
+    });
+  });
+  document.querySelectorAll('.parallax-gallery').forEach(function (el) {
+    var speed = parseFloat(el.dataset.speed) || -8;
+    gsap.to(el.querySelector('img'), {
+      yPercent: speed,
+      ease: 'none',
+      scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true }
+    });
+  });
+}
+
+/* ==========================================================================
+   10. GALLERY REVEAL (clip-path wipe) + LIGHTBOX
+   ========================================================================== */
+var galleryImages = Array.prototype.map.call(document.querySelectorAll('.gallery-item img'), function (img) {
+  return { src: img.getAttribute('src'), alt: img.getAttribute('alt'), el: img };
+});
+
+function initGalleryReveal() {
+  var items = document.querySelectorAll('.gallery-item');
+  if (!('IntersectionObserver' in window) || reduceMotion) {
+    items.forEach(function (i) {
+      var clip = i.querySelector('.gallery-clip');
+      if (clip) clip.style.clipPath = 'none';
+    });
+  } else {
+    // Observe the unclipped .gallery-item, but animate the clip-path on its
+    // inner .gallery-clip wrapper — observing a clipped element directly
+    // can report a permanent zero intersection ratio and never fire.
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          var clip = entry.target.querySelector('.gallery-clip');
+          if (clip) {
+            clip.style.transition = 'clip-path 0.9s cubic-bezier(0.22,1,0.36,1)';
+            clip.style.clipPath = 'inset(0 0% 0 0)';
+          }
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    items.forEach(function (i) { io.observe(i); });
+  }
+
+  items.forEach(function (item, i) {
+    item.addEventListener('click', function () { openLightbox(i); });
+  });
+}
+
+var lightbox = document.getElementById('lightbox');
+var lightboxImg = document.getElementById('lightboxImg');
+var lightboxIndex = 0;
+var lastFocused = null;
+
+function openLightbox(i) {
+  lightboxIndex = i;
+  var data = galleryImages[i];
+  lightboxImg.src = data.el.currentSrc || data.el.src;
+  lightboxImg.alt = data.alt;
+  lightbox.classList.add('open');
+  lightbox.setAttribute('aria-hidden', 'false');
+  lastFocused = document.activeElement;
+  document.getElementById('lightboxClose').focus();
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  lightbox.classList.remove('open');
+  lightbox.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  if (lastFocused) lastFocused.focus();
+}
+function navLightbox(dir) {
+  lightboxIndex = (lightboxIndex + dir + galleryImages.length) % galleryImages.length;
+  var data = galleryImages[lightboxIndex];
+  lightboxImg.src = data.el.currentSrc || data.el.src;
+  lightboxImg.alt = data.alt;
+}
+document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+document.getElementById('lightboxPrev').addEventListener('click', function () { navLightbox(-1); });
+document.getElementById('lightboxNext').addEventListener('click', function () { navLightbox(1); });
+lightbox.addEventListener('click', function (e) { if (e.target === lightbox) closeLightbox(); });
+document.addEventListener('keydown', function (e) {
+  if (!lightbox.classList.contains('open')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') navLightbox(-1);
+  if (e.key === 'ArrowRight') navLightbox(1);
+  if (e.key === 'Tab') {
+    var focusable = lightbox.querySelectorAll('button');
+    var first = focusable[0], last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+});
+
+/* ==========================================================================
+   11. SERVICE ROW — cursor-following thumbnail (lerp)
+   ========================================================================== */
+function initServiceThumb() {
+  if (isTouch) return;
+  var thumb = document.getElementById('serviceThumb');
+  var thumbImg = document.getElementById('serviceThumbImg');
+  var rows = document.querySelectorAll('.service-row');
+  var target = { x: 0, y: 0 }, current = { x: 0, y: 0 };
+  var active = false;
+  var raf = null;
+
+  function loop() {
+    current.x += (target.x - current.x) * 0.12;
+    current.y += (target.y - current.y) * 0.12;
+    thumb.style.transform = 'translate(' + (current.x + 26) + 'px, ' + (current.y - 90) + 'px)';
+    raf = requestAnimationFrame(loop);
+  }
+
+  rows.forEach(function (row) {
+    row.addEventListener('mouseenter', function () {
+      thumbImg.src = row.dataset.thumb;
+      thumbImg.alt = row.dataset.thumbAlt || '';
+      thumb.classList.add('visible');
+      active = true;
+      if (!raf) loop();
+    });
+    row.addEventListener('mousemove', function (e) {
+      target.x = e.clientX;
+      target.y = e.clientY;
+    });
+    row.addEventListener('mouseleave', function () {
+      thumb.classList.remove('visible');
+      active = false;
+    });
+  });
+}
+
+/* ==========================================================================
+   12. COUNT-UP STATS
+   ========================================================================== */
+function initCountUp() {
+  var els = document.querySelectorAll('.count-up');
+  if (!els.length) return;
+  if (!('IntersectionObserver' in window) || reduceMotion) {
+    els.forEach(function (el) { el.textContent = el.dataset.target; });
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      var el = entry.target;
+      var target = parseFloat(el.dataset.target);
+      var obj = { val: 0 };
+      if (hasGSAP) {
+        gsap.to(obj, {
+          val: target, duration: 1.4, ease: 'power2.out',
+          onUpdate: function () { el.textContent = obj.val.toFixed(1); }
+        });
+      } else {
+        el.textContent = target.toFixed(1);
+      }
+      io.unobserve(el);
+    });
+  }, { threshold: 0.6 });
+  els.forEach(function (el) { io.observe(el); });
+}
+
+/* ==========================================================================
+   13. MAGNETIC BUTTONS
+   ========================================================================== */
+function initMagnetic() {
+  if (isTouch || reduceMotion) return;
+  document.querySelectorAll('.magnetic').forEach(function (btn) {
+    btn.addEventListener('mousemove', function (e) {
+      var rect = btn.getBoundingClientRect();
+      var relX = e.clientX - rect.left - rect.width / 2;
+      var relY = e.clientY - rect.top - rect.height / 2;
+      var strength = 0.18;
+      var moveX = Math.max(-6, Math.min(6, relX * strength));
+      var moveY = Math.max(-6, Math.min(6, relY * strength));
+      if (hasGSAP) {
+        gsap.to(btn, { x: moveX, y: moveY, duration: 0.3, ease: 'power2.out' });
+      } else {
+        btn.style.transform = 'translate(' + moveX + 'px,' + moveY + 'px)';
+      }
+    });
+    btn.addEventListener('mouseleave', function () {
+      if (hasGSAP) {
+        gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.5)' });
+      } else {
+        btn.style.transform = 'translate(0,0)';
+      }
+    });
+  });
+}
+
+/* ==========================================================================
+   14. CUSTOM CURSOR
+   ========================================================================== */
+function initCustomCursor() {
+  if (isTouch || reduceMotion) return;
+  document.body.classList.add('cursor-active');
+  var dot = document.querySelector('.cursor-dot');
+  var ring = document.querySelector('.cursor-ring');
+  var target = { x: 0, y: 0 }, ringPos = { x: 0, y: 0 };
+
+  window.addEventListener('mousemove', function (e) {
+    target.x = e.clientX; target.y = e.clientY;
+    dot.style.left = e.clientX + 'px';
+    dot.style.top = e.clientY + 'px';
+  });
+
+  function loop() {
+    ringPos.x += (target.x - ringPos.x) * 0.18;
+    ringPos.y += (target.y - ringPos.y) * 0.18;
+    ring.style.left = ringPos.x + 'px';
+    ring.style.top = ringPos.y + 'px';
+    requestAnimationFrame(loop);
+  }
+  loop();
+
+  document.querySelectorAll('a, button, .gallery-item').forEach(function (el) {
+    el.addEventListener('mouseenter', function () { ring.classList.add('hovering'); });
+    el.addEventListener('mouseleave', function () { ring.classList.remove('hovering'); });
+  });
+
+  document.addEventListener('mouseleave', function () {
+    dot.classList.add('cursor-hide'); ring.classList.add('cursor-hide');
+  });
+  document.addEventListener('mouseenter', function () {
+    dot.classList.remove('cursor-hide'); ring.classList.remove('cursor-hide');
+  });
+}
+
+/* ==========================================================================
+   15. REVIEW SLIDER
+   ========================================================================== */
+function initReviewSlider() {
+  var slides = document.querySelectorAll('.slide');
+  var dots = document.querySelectorAll('.slider-dots button');
+  var slider = document.getElementById('reviewSlider');
+  var current = 0;
+  var timer = null;
+
+  function goTo(i) {
+    slides[current].classList.remove('active');
+    dots[current].classList.remove('active');
+    dots[current].setAttribute('aria-selected', 'false');
+    current = i;
+    slides[current].classList.add('active');
+    dots[current].classList.add('active');
+    dots[current].setAttribute('aria-selected', 'true');
+  }
+
+  dots.forEach(function (dot, i) {
+    dot.addEventListener('click', function () { goTo(i); restart(); });
+  });
+
+  function tick() { goTo((current + 1) % slides.length); }
+  function restart() {
+    if (timer) clearInterval(timer);
+    if (!reduceMotion) timer = setInterval(tick, 7000);
+  }
+  restart();
+
+  slider.addEventListener('mouseenter', function () { if (timer) clearInterval(timer); });
+  slider.addEventListener('mouseleave', restart);
+}
+
+/* ==========================================================================
+   16. INIT
+   ========================================================================== */
+window.addEventListener('DOMContentLoaded', function () {
+  initScrollReveals();
+  initSplitHeadlines();
+  initParallax();
+  initGalleryReveal();
+  initServiceThumb();
+  initCountUp();
+  initMagnetic();
+  initCustomCursor();
+  initReviewSlider();
+});
+
+window.addEventListener('load', function () {
+  if (hasGSAP && typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+});
+</script>
+</body>
+</html>
