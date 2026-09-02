@@ -382,6 +382,13 @@ section { position: relative; }
   letter-spacing: -0.03em;
   color: var(--espresso);
   margin: 0 0 28px;
+  /* Selecting text while the lines below are still sliding in on a GSAP
+     transform makes the browser's selection-highlight painting fall out
+     of sync with the animating glyph position — letters can appear to
+     go missing mid-drag. The headline is display type, not copy anyone
+     needs to select, so it's simplest to make it unselectable outright. */
+  user-select: none;
+  -webkit-user-select: none;
 }
 .hero-headline .line {
   display: block;
@@ -1436,6 +1443,9 @@ function runLoadAnimation() {
 
   if (!hasGSAP || reduceMotion) {
     if (overlay) overlay.style.display = 'none';
+    // The headline lines are only ever reset by the GSAP timeline below —
+    // without it they'd stay clipped at translateY(110%) forever.
+    lines.forEach(function (span) { span.style.transform = 'none'; });
     gsapFallbackShow();
     return;
   }
